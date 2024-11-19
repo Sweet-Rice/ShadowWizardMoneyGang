@@ -1,4 +1,4 @@
-import java.util.List;
+
 import java.util.ArrayList;
 public class Summons {
 
@@ -7,12 +7,10 @@ public class Summons {
     //Summons class will serve to initialize objects that will be used as the statistics of summons
 
     //Name and type
-    private String name;
-    public enum Type    {Bug, Dragon, Electric, Fighting,
-                        Fire, Flying, Ghost, Grass, Ground,
-                        Ice, Normal, Poison, Psychic, Rock, Water, Null;}
-    public Type type1;
-    public Type type2;
+    private final String name;
+
+    public DamageCalc.Type type1;
+    public DamageCalc.Type type2;
 
     //Stats for each summon
     private int atk;
@@ -21,9 +19,9 @@ public class Summons {
     private int spdef;
     private int hp;
     private int spd;
-    private List<Moves> moves;
+    private ArrayList<Moves> moves;
     //damage multiplier based on type
-    private double TypeMult;
+    private final int maxhp;
     /*
     Methodname Summons - serves as a constructor method to define all stats of each summon.
     @param name - name of the summon
@@ -37,8 +35,8 @@ public class Summons {
     @param spd - speed value of the summon
     @param moves - list of moves the summon has
      */
-    public Summons(String name, Type type1, Type type2,
-                   int atk, int spatk, int def, int spdef, int hp, int spd){
+    public Summons(String name, DamageCalc.Type type1, DamageCalc.Type type2,
+                   int atk, int spatk, int def, int spdef, int maxhp, int spd){
        this.name = name;
        this.type1 = type1;
        this.type2 = type2;
@@ -46,12 +44,20 @@ public class Summons {
        this.spatk = spatk;
        this.def = def;
        this.spdef = spdef;
-       this.hp = hp;
+       this.maxhp = maxhp;
+       this.hp = maxhp;
        this.spd = spd;
        this.moves = new ArrayList<>();
     }
+    public void addMove(Moves move){
+        moves.add(move);
+    }
 
+    @Override
+    public String toString() {
+        String output = this.name;
 
-
+        return output;
+    }
 
 }

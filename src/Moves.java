@@ -1,25 +1,28 @@
 public class Moves {
-    public enum Type {
-        Bug, Dragon, Electric, Fighting,
-        Fire, Flying, Ghost, Grass, Ground,
-        Ice, Normal, Poison, Psychic, Rock, Water
-    }
+
     public enum Dmg { Atk, Spatk}
 
-    private String name;
-    public Type type;
-    private Dmg dmg;
-    private String description;
 
-    public Moves(String name, Type type, Dmg dmg, String description) {
+
+    private final String name;
+    public DamageCalc.Type type;
+    private final Dmg dmg;
+    private final int basepower;
+    private final String description;
+
+
+    public Moves(String name, DamageCalc.Type type, Dmg dmg, int bp, String description) {
         this.name = name;
         this.type = type;
         this.dmg = dmg;
+        this.basepower = bp;
         this.description = description;
 
     }
-
-    public Type getType() {
+    public int getBasepower() {
+        return basepower;
+    }
+    public DamageCalc.Type getType() {
         return type;
     }
 
