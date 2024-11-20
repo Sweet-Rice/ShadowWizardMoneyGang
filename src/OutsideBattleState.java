@@ -1,7 +1,7 @@
 public class OutsideBattleState implements GameState {
-    private Wizards you;
-    private Game game;
-    private Wizards enemy;
+    private final Wizards you;
+    private final Game game;
+    private final Wizards enemy;
 
     public OutsideBattleState(Game game, Wizards you) {
         this.game = game;
@@ -16,11 +16,9 @@ public class OutsideBattleState implements GameState {
     }
     public void handleInput(String input) {
         switch (input) {
-            case "1"-> /* Fight */ {
-                //if player has >0 summons,
-                game.setState(new BattleState(game, you, enemy));/* Fight */
+            case "1"-> /* Fight */ //if player has >0 summons,
                 //else print saying you have no summons
-            }
+                    game.setState(new BattleState( you, enemy));/* Fight */
             case "2"-> /* Summons */ game.setState(new SummonMenu(game, you));
             default -> System.out.println("Invalid input");
         }

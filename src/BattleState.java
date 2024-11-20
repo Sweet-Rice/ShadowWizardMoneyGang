@@ -1,15 +1,13 @@
 
 
 public class BattleState implements GameState{
-    private final Game game;
     private final Wizards you;
     private final Wizards enemy;
     private int menu = 0;
 
 
 
-    public BattleState(Game game, Wizards you, Wizards enemy) {
-    this.game = game;
+    public BattleState( Wizards you, Wizards enemy) {
     this.you = you;
     this.enemy = enemy;
 }

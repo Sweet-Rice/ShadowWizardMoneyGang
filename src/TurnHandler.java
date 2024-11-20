@@ -14,8 +14,8 @@ private static Moves bMove;
 private static boolean moved = false;
 
 public TurnHandler(Wizards you, Wizards enemy) {
-    this.you = you;
-    this.enemy = enemy;
+    TurnHandler.you = you;
+    TurnHandler.enemy = enemy;
 }
 
 public static boolean youmoved() {
@@ -94,14 +94,12 @@ private static double weatherMultiplier(Moves a){
            switch (a.type){
            case Fire ->mult= 1.5;
            case Water -> mult= 0.5;
-           default -> mult = 1.0;
-       }
+           }
        }
        case Rain -> {
            switch (a.type){
                case Fire ->mult= 0.5;
                case Water -> mult= 1.5;
-               default -> mult = 1.0;
            }
        }
    }
