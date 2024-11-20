@@ -13,7 +13,7 @@ public class BattleState implements GameState{
 }
 
     public void enterState() {
-        TurnHandler turnHandler = new TurnHandler(you, enemy);
+        TurnHandler TurnHandler = new TurnHandler(you, enemy);
     }
 
     public void handleInput(String input) {
