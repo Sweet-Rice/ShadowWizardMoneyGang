@@ -11,7 +11,7 @@ public class OutsideBattleState implements GameState {
 
     public void enterState() {
 
-        System.out.printf("You have %d wins, so you can fight %s ", Driver.wins, enemy.toString());
+        System.out.printf("You have %d wins, so you can fight Gym Leader %s. ", Driver.wins, enemy.getName());
 
     }
     public void handleInput(String input) {
@@ -28,13 +28,13 @@ public class OutsideBattleState implements GameState {
         System.out.println("erm");
     }
     public void exitState() {
-        System.out.println("exiting");
+
     }
 
     @Override
     public void showMenu() {
         System.out.println("What would you like to do?");
-        System.out.print("1. Fight \t\t 2. Edit Summons\n");
+        System.out.printf("\n1. Fight %s\t\t 2. Edit Summons\n\n", enemy.getName());
         System.out.print("Enter your choice: ");
     }
 }

@@ -34,7 +34,7 @@ public class Driver {
 
         //summmon init
         //sample init
-        Summons myratatta = new Summons("myratatta", DamageCalc.Type.Normal, DamageCalc.Type.Null, 30, 30, 30, 30, 30, 30);
+        Summons myratatta = new Summons("myratatta", DamageCalc.Type.Normal, DamageCalc.Type.Null, 30, 30, 30, 30, 30, 31);
         myratatta.addMove(tackle); myratatta.addMove(tackle);
 
         Summons enemyratatta = new Summons("enemyratatta", DamageCalc.Type.Normal, DamageCalc.Type.Null, 30, 30, 30, 30, 30, 30);

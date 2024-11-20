@@ -8,12 +8,16 @@ static Random rand = new Random();
 private static Wizards you;
 private static Wizards enemy;
 private static Moves.Status Weather;
-private static int turns = 0;
+private static int turns = 1;
 private static Moves aMove;
 private static Moves bMove;
 private static boolean moved = false;
 
-public TurnHandler(Wizards you, Wizards enemy) {
+    public static int getTurns() {
+        return turns;
+    }
+
+    public TurnHandler(Wizards you, Wizards enemy) {
     TurnHandler.you = you;
     TurnHandler.enemy = enemy;
 }
@@ -34,7 +38,17 @@ public static void setbMove(){
     bMove = enemy.lead.moves.get(rand.nextInt(enemy.lead.moves.size()));
 }
 
+    public static boolean allFainted(Wizards player) {
+        for (int i = 0; i < player.summons.size(); i++) {
+            if (player.summons.get(i).getHp() > 0) {
+                return false;  // If there's any Pokémon still standing, return false
+            }
+        }
+        return true;  // All Pokémon have fainted
+    }
+
 public static void mainTurn() {
+
     //sets turn priority
     Moves moveA;
     Moves moveB;
@@ -53,32 +67,42 @@ public static void mainTurn() {
         moveA = bMove;
     }
     if (moved){
-    b.setHp(b.getHp()-getDamage(a, b, moveA));
-    System.out.printf("%s did %d damage!", a.getName(), getDamage(a, b, moveB));
-    if (faintHandler()){
-        //you fainted
-        System.out.println("You fainted");
-    }else if (!faintHandler()){
-        //enemy fainted
-        System.out.println("Enemy fainted");
+        b.setHp(b.getHp()-getDamage(a, b, moveA));
+        System.out.printf("%s did %d damage!\n", a.getName(), getDamage(a, b, moveB));
+
+        if (faintChecker()) return;
+
+        a.setHp(b.getHp()-getDamage(b, a, moveB));
+        System.out.printf("%s did %d damage!\n", b.getName(), getDamage(b, a, moveB));
+        if (faintChecker()) return;
+    } else {
+        you.lead.setHp(you.lead.getHp()-getDamage(enemy.lead, you.lead, bMove));
+        if (faintChecker()) return;
     }
-    a.setHp(b.getHp()-getDamage(b, a, bMove));
-        System.out.printf("%s did %d damage!", b.getName(), getDamage(b, a, bMove));
-    }
-    if (faintHandler()){
-        //you fainted
-        System.out.println("You fainted");
-    }else if (!faintHandler()){
-        //enemy fainted
-        System.out.println("Enemy fainted");
-    }
+
     turns++;
-    System.out.println("Turn " + turns);
+
 
 
 
 }
-private static void WeatherHandler(Moves.Status status){
+
+    private static boolean faintChecker() {
+        if (faintHandler()){
+            //you fainted
+            System.out.printf("%s fainted!\n", you.lead.getName());
+            turns++;
+            return true;
+        }else if (!faintHandler()){
+            //enemy fainted
+            System.out.printf("%s fainted!\n", enemy.lead.getName());
+            turns++;
+            return true;
+        }
+        return false;
+    }
+
+    private static void WeatherHandler(Moves.Status status){
     switch(status){
         case Sun -> Weather = Moves.Status.Sun;
         case Rain -> Weather = Moves.Status.Rain;

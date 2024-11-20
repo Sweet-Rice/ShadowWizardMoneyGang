@@ -74,6 +74,9 @@ public class Summons {
     public int getHp(){
         return hp;
     }
+    public  int getMaxHp(){
+        return maxhp;
+    }
     public void setHp(int hp){
         this.hp = hp;
     }
