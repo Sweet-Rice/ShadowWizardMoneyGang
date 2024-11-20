@@ -1,5 +1,7 @@
 
 import java.util.ArrayList;
+import java.util.Objects;
+
 public class Summons {
 
 
@@ -13,15 +15,17 @@ public class Summons {
     public DamageCalc.Type type2;
 
     //Stats for each summon
-    private int atk;
-    private int spatk;
-    private int def;
-    private int spdef;
+    private boolean fainted = false;
+    private final int atk;
+    private final int spatk;
+    private final int def;
+    private final int spdef;
     private int hp;
-    private int spd;
-    private ArrayList<Moves> moves;
+    private final int spd;
+    public ArrayList<Moves> moves;
     //damage multiplier based on type
     private final int maxhp;
+    public Moves.Status status = Moves.Status.Null;
     /*
     Methodname Summons - serves as a constructor method to define all stats of each summon.
     @param name - name of the summon
@@ -52,12 +56,58 @@ public class Summons {
     public void addMove(Moves move){
         moves.add(move);
     }
-
+    public int getAtk(){
+        return atk;
+    }
+    public int getSpatk(){
+        return spatk;
+    }
+    public int getDef(){
+        return def;
+    }
+    public int getSpdef(){
+        return spdef;
+    }
+    public int getSpd(){
+        return spd;
+    }
+    public int getHp(){
+        return hp;
+    }
+    public void setHp(int hp){
+        this.hp = hp;
+    }
+    public boolean isFainted(){
+        return fainted;
+    }
+    public void setFainted(boolean fainted){
+        this.fainted = fainted;
+    }
+    public String getName(){
+        return name;
+    }
+    public double isParalyzed(){
+        double paralyzed = 1.0;
+        if (status == Moves.Status.Par) {
+            paralyzed = 0.5;
+        }
+        return paralyzed;
+    }
     @Override
     public String toString() {
-        String output = this.name;
-
-        return output;
+        return this.name +": " + this.hp + "/" + this.maxhp + "hp";
     }
 
+    public String MovesToString() {
+        String output = "";
+
+        for (int j = 0; j < this.moves.size(); j++) {
+            output += "\t" + (j + 1) + ". " + this.moves.get(j).toString() + "\t\t\t\t\t\t";
+            if (j % 2 == 1) {
+                output += "\n\t" + this.moves.get(j - 1).getDescription() + "\t\t\t\t\t\t" + this.moves.get(j).getDescription() + "\n";
+            }
+
+        }
+        return output;
+    }
 }

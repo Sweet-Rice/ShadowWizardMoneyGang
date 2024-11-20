@@ -29,18 +29,23 @@ public class Driver {
 
         //Moves init
         // sample init Moves tackle = new Moves("tackle", DamageCalc.Type.Normal, Moves.Dmg.Atk, 35,"The user hurls itself at the target.") ;
-        Moves tackle = new Moves("tackle", DamageCalc.Type.Normal, Moves.Dmg.Atk, 35,"The user hurls itself at the target.") ;
+        Moves tackle = new Moves("tackle", DamageCalc.Type.Normal, Moves.Dmg.Atk, 35,30, Moves.Status.Null, "The user hurls itself at the target.") ;
 
 
         //summmon init
         //sample init
-        Summons ratatta = new Summons("ratatta", DamageCalc.Type.Normal, DamageCalc.Type.Null, 30, 30, 30, 30, 30, 30);
-        ratatta.addMove(tackle);
+        Summons myratatta = new Summons("myratatta", DamageCalc.Type.Normal, DamageCalc.Type.Null, 30, 30, 30, 30, 30, 30);
+        myratatta.addMove(tackle); myratatta.addMove(tackle);
 
+        Summons enemyratatta = new Summons("enemyratatta", DamageCalc.Type.Normal, DamageCalc.Type.Null, 30, 30, 30, 30, 30, 30);
+        enemyratatta.addMove(tackle); enemyratatta.addMove(tackle);
         //Wizard init
         Wizards You = new Wizards("You");
-        You.addSummons(ratatta);
+        You.addSummons(myratatta);
+
         Wizards Zero = new Wizards("Zero");
+        Zero.addSummons(enemyratatta);
+
         Wizards One = new Wizards("One");
         Wizards Two = new Wizards("Two");
         Wizards Three = new Wizards("Three");
