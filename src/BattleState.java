@@ -1,10 +1,9 @@
-import java.util.ArrayList;
+
 
 public class BattleState implements GameState{
-    private Game game;
-    private Wizards you;
-    private Wizards enemy;
-    public Moves.Status weather = Moves.Status.Null;
+    private final Game game;
+    private final Wizards you;
+    private final Wizards enemy;
     private int menu = 0;
 
 
@@ -43,7 +42,7 @@ public class BattleState implements GameState{
             if (x<= you.lead.moves.size()){
                 switch (x){
                     case 1 -> {
-                        TurnHandler.setaMove(you.lead.moves.get(0));
+                        TurnHandler.setaMove(you.lead.moves.getFirst());
                         if (TurnHandler.youmoved()) {
                             TurnHandler.mainTurn();
                             menu = 0;
@@ -88,7 +87,7 @@ public class BattleState implements GameState{
                 switch (x) {
                     case 1-> {
                         if (!you.summons.getFirst().isFainted()) {
-                            System.out.printf("Come back, %s! Go, %s!\n", you.lead.getName(), you.summons.get(0).getName());
+                            System.out.printf("Come back, %s! Go, %s!\n", you.lead.getName(), you.summons.getFirst().getName());
                             you.setLead(you.summons.getFirst());
                             if (TurnHandler.youmoved()) {
                                 TurnHandler.mainTurn();

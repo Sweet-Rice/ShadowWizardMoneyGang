@@ -73,6 +73,7 @@ public static void mainTurn() {
         System.out.println("Enemy fainted");
     }
     turns++;
+    System.out.println("Turn " + turns);
 
 
 
