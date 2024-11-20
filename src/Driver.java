@@ -29,7 +29,7 @@ public class Driver {
 
         //Moves init
         // sample init Moves tackle = new Moves("tackle", DamageCalc.Type.Normal, Moves.Dmg.Atk, 35,"The user hurls itself at the target.") ;
-        Moves tackle = new Moves("tackle", DamageCalc.Type.Normal, Moves.Dmg.Atk, 35,30, Moves.Status.Null, "The user hurls itself at the target.") ;
+        Moves tackle = new Moves("tackle", DamageCalc.Type.Normal, Moves.Dmg.Atk, 35,30, Moves.Status.Null, Moves.Who.Opposite,"The user hurls itself at the target.") ;
 
 
         //summmon init

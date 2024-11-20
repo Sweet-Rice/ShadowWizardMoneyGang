@@ -7,7 +7,7 @@ static Random rand = new Random();
 
 private static Wizards you;
 private static Wizards enemy;
-private static Moves.Status Weather;
+private static Moves.Status Weather = Moves.Status.Null;
 private static int turns = 1;
 private static Moves aMove;
 private static Moves bMove;
@@ -16,7 +16,12 @@ private static boolean moved = false;
     public static int getTurns() {
         return turns;
     }
-
+public static Moves.Status getWeather() {
+        return Weather;
+}
+public static void setWeather(Moves.Status weather) {
+        Weather = weather;
+}
     public TurnHandler(Wizards you, Wizards enemy) {
     TurnHandler.you = you;
     TurnHandler.enemy = enemy;
@@ -55,7 +60,9 @@ public static void mainTurn() {
     Summons a;
     Summons b;
     setbMove();
-    if ((you.lead.getSpd()*you.lead.isParalyzed())>(enemy.lead.getSpd()*enemy.lead.isParalyzed())) {
+    // dont need to change this. You need to modify methods in Summons and maybe moves.
+    if (((you.lead.getSpd()* Moves.getBuff(you.lead, Moves.Status.Spd) )* you.lead.isParalyzed())
+            > ((enemy.lead.getSpd() * Moves.getBuff(you.lead, Moves.Status.Spd)* enemy.lead.isParalyzed()))) {
         a = you.lead;
         b = enemy.lead;
         moveA = aMove;
@@ -66,7 +73,17 @@ public static void mainTurn() {
         moveB = aMove;
         moveA = bMove;
     }
-    if (moved){
+    //overall structure of this is okay. need to change the things inside drastically
+    if (moved) {
+        Moves.doMove(a, b, moveA);
+        if (faintChecker()) return;
+
+        Moves.doMove(b, a, moveB);
+        if (faintChecker()) return;
+    } else {
+        Moves.doMove(enemy.lead, you.lead, bMove);
+    }
+        /*
         b.setHp(b.getHp()-getDamage(a, b, moveA));
         System.out.printf("%s did %d damage!\n", a.getName(), getDamage(a, b, moveB));
 
@@ -79,9 +96,8 @@ public static void mainTurn() {
         you.lead.setHp(you.lead.getHp()-getDamage(enemy.lead, you.lead, bMove));
         if (faintChecker()) return;
     }
-
-    turns++;
-
+    */
+        turns++;
 
 
 
@@ -102,16 +118,16 @@ public static void mainTurn() {
         return false;
     }
 
-    private static void WeatherHandler(Moves.Status status){
+    public static void WeatherHandler(Moves.Status status){
     switch(status){
         case Sun -> Weather = Moves.Status.Sun;
         case Rain -> Weather = Moves.Status.Rain;
 
-        default -> Weather = Moves.Status.Null;
+        case Null -> Weather = Moves.Status.Null;
     }
 
 }
-private static double weatherMultiplier(Moves a){
+public static double weatherMultiplier(Moves a){
    double mult = 1.0;
     switch (Weather){
        case Sun -> {
@@ -144,13 +160,13 @@ private static Boolean faintHandler(){
     }
 return faintStatus;
 }
-private static int getDamage(Summons attacker, Summons defender, Moves a){
+/*private static int getDamage(Summons attacker, Summons defender, Moves a){
     double other = 1.0; //used if passives are implemented
     double damage;
     double ADratio;
 
     double burnMult = 1.0;
-    if (attacker.status == Moves.Status.Burn){
+    if (attacker.hasStatus(Moves.Status.Burn)){
         burnMult = 1.5;
     }
     double stab = 1.0;
@@ -172,5 +188,5 @@ private static int getDamage(Summons attacker, Summons defender, Moves a){
                     DamageCalc.getEffectiveness(a.type, defender.type2));
     damage *= burnMult * other;
     return (int)damage;
-    }
+    }*/
 }
