@@ -88,6 +88,53 @@ public class Summons {
     public  int getMaxHp(){
         return maxhp;
     }
+
+    public void removeStatus(Moves.Status status){
+        for (int i = 0; i < statuses.size(); i++){
+            if (statuses.get(i) == status){
+                statuses.remove(i);
+                return;
+            }
+        }
+    }
+    public double getBuff( Moves.Status status){
+        int x = 0;
+        double modifier;
+        switch (status){
+            case Atk ->x =hasStatus(Moves.Status.Atk)-hasStatus(Moves.Status.LessAtk);
+            case SpAtk -> x = hasStatus(Moves.Status.SpAtk)-hasStatus(Moves.Status.LessSpAtk);
+            case Def -> x = hasStatus(Moves.Status.Def)-hasStatus(Moves.Status.LessDef);
+            case SpDef -> x = hasStatus(Moves.Status.SpDef)-hasStatus(Moves.Status.LessSpDef);
+            case Spd -> x = hasStatus(Moves.Status.Spd)-hasStatus(Moves.Status.LessSpd);
+
+        }
+        if (x>=0){
+            modifier = (double) (x + 2) /2;
+        }else{
+            x=x*(-1);
+            modifier = (double) 2 /(2+x);
+        }
+        return modifier;
+    }
+    public String BuffsToString(){
+        String output = "";
+        if (getBuff(Moves.Status.Atk)>1.0){
+            output += "Atk: " + getBuff(Moves.Status.Atk)+" ";
+        }
+        if (getBuff(Moves.Status.SpAtk)>1.0){
+            output += "SpAtk: " + getBuff(Moves.Status.SpAtk)+" ";
+        }
+        if (getBuff(Moves.Status.Def)>1.0){
+            output += "Def: " + getBuff(Moves.Status.Def)+" ";
+        }
+        if (getBuff(Moves.Status.SpDef)>1.0){
+            output += "SpDef: " + getBuff(Moves.Status.SpDef)+" ";
+        }
+        if (getBuff(Moves.Status.Spd)>1.0){
+            output += "Spd: " + getBuff(Moves.Status.Spd)+" ";
+        }
+        return output;
+    }
     public int hasStatus(Moves.Status status){
         int x = 0;
         for(int i = 0; i < statuses.size(); i++){
@@ -224,41 +271,71 @@ public class Summons {
                 }
             }
             case Par -> {
-                if (!(hasStatus(Moves.Status.Par)>0)){
+                if ((hasStatus(Moves.Status.Par)>0)||
+                (hasStatus(Moves.Status.Slp)>0)||
+                (hasStatus(Moves.Status.Pois)>0)||
+                (hasStatus(Moves.Status.Burn)>0)){
+                    System.out.println("Summon is already paralyzed!");
+                }
+                else {
+
                     statuses.add(Moves.Status.Par);
                     System.out.println("Summon is now paralyzed!");
                 }
-                else {
-                    System.out.println("Summon is already paralyzed!");
-                }
             }
             case Slp -> {
-                if (!(hasStatus(Moves.Status.Slp)>0)){
+                if ((hasStatus(Moves.Status.Par)>0)||
+                        (hasStatus(Moves.Status.Slp)>0)||
+                        (hasStatus(Moves.Status.Pois)>0)||
+                        (hasStatus(Moves.Status.Burn)>0)){
+
+                    System.out.printf("Summon is already %s!", getStatusName());
+                }else {
                     statuses.add(Moves.Status.Slp);
                     System.out.println("Summon fell asleep!");
-                }else {
-                    System.out.println("Summon is already asleep!");
+
                 }
             }
             case Pois -> {
-                if (!(hasStatus(Moves.Status.Pois)>0)){
+                if ((hasStatus(Moves.Status.Par)>0)||
+                        (hasStatus(Moves.Status.Slp)>0)||
+                        (hasStatus(Moves.Status.Pois)>0)||
+                        (hasStatus(Moves.Status.Burn)>0)){
+
+                    System.out.printf("Summon is already %s!", getStatusName());
+                }
+                else {
                     statuses.add(Moves.Status.Pois);
                     System.out.println("Summon got poisoned!");
                 }
-                else {
-                    System.out.println("Summon is already poisoned!");
-                }
             }
             case Burn -> {
-                if (!(hasStatus(Moves.Status.Burn)>0)){
-                    statuses.add(Moves.Status.Burn);
-                    System.out.println("Summon got burned!");
+                if ((hasStatus(Moves.Status.Par)>0)||
+                        (hasStatus(Moves.Status.Slp)>0)||
+                        (hasStatus(Moves.Status.Pois)>0)||
+                        (hasStatus(Moves.Status.Burn)>0)){
+                    System.out.printf("Summon is already %s!", getStatusName());
                 }
                 else {
-                    System.out.println("Summon is already burned!");
+                    statuses.add(Moves.Status.Burn);
+                    System.out.println("Summon got burned!");
+
                 }
             }
         }
+    }
+    public String getStatusName(){
+        String status = "";
+        for (int i = 0; i < statuses.size(); i++) {
+            switch (statuses.get(i)){
+                case Par -> status = "Paralyzed";
+                case Slp -> status = "Asleep";
+                case Pois -> status = "Poisoned";
+                case Burn -> status = "Burned";
+
+            }
+        }
+        return status;
     }
 
     //override

@@ -2,58 +2,48 @@ import java.util.Random;
 
 
 public class TurnHandler {
-static Random rand = new Random();
+ Random rand = new Random();
+private Game game;
 
+private Wizards you;
+private Wizards enemy;
+private Moves.Status Weather = Moves.Status.Null;
+private int turns = 1;
+private  Moves aMove;
+private  Moves bMove;
+private  boolean moved = false;
+private int timedSlp = 0;
+private int timedWeather = 0;
 
-private static Wizards you;
-private static Wizards enemy;
-private static Moves.Status Weather = Moves.Status.Null;
-private static int turns = 1;
-private static Moves aMove;
-private static Moves bMove;
-private static boolean moved = false;
-
-    public static int getTurns() {
-        return turns;
+public TurnHandler(Game game, Wizards you, Wizards enemy) {
+        this.you = you;
+        this.enemy = enemy;
+        this.game = game;
     }
-public static Moves.Status getWeather() {
-        return Weather;
-}
-public static void setWeather(Moves.Status weather) {
-        Weather = weather;
-}
-    public TurnHandler(Wizards you, Wizards enemy) {
-    TurnHandler.you = you;
-    TurnHandler.enemy = enemy;
-}
+public void toRainOrNotToRain(Summons user, Summons nonUser, Moves move) {
+        switch (move.getStatus()){
+            case Sun -> {
+                setWeather(Moves.Status.Sun);
+                System.out.println("The sun grew bright!");
+            }
+            case Rain -> {
+                setWeather(Moves.Status.Rain);
+                System.out.println("The rain came pouring!");
+            }default -> {
+                switch (move.getSelf()){
+                    case Opposite, Drain, Recoil -> nonUser.addStatuses(move.getStatus());
+                    case Self -> user.addStatuses(move.getStatus());
+                    case Both -> {
+                        nonUser.addStatuses(move.getStatus());
+                        user.addStatuses(move.getStatus());
+                    }
+                }
 
-public static boolean youmoved() {
-    moved = true;
-    return true;
-
-}
-
-
-public static void setaMove(Moves a){
-    aMove = a;
-
-}
-public static void setbMove(){
-    //Enemy AI
-    bMove = enemy.lead.moves.get(rand.nextInt(enemy.lead.moves.size()));
-}
-
-    public static boolean allFainted(Wizards player) {
-        for (int i = 0; i < player.summons.size(); i++) {
-            if (player.summons.get(i).getHp() > 0) {
-                return false;  // If there's any Pokémon still standing, return false
             }
         }
-        return true;  // All Pokémon have fainted
     }
-
-public static void mainTurn() {
-
+public void mainTurn() {
+    System.out.print("\nTurn " + turns);
     //sets turn priority
     Moves moveA;
     Moves moveB;
@@ -61,8 +51,8 @@ public static void mainTurn() {
     Summons b;
     setbMove();
     // dont need to change this. You need to modify methods in Summons and maybe moves.
-    if (((you.lead.getSpd()* Moves.getBuff(you.lead, Moves.Status.Spd) )* you.lead.isParalyzed())
-            > ((enemy.lead.getSpd() * Moves.getBuff(you.lead, Moves.Status.Spd)* enemy.lead.isParalyzed()))) {
+    if (((you.lead.getSpd()* you.lead.getBuff( Moves.Status.Spd) )* you.lead.isParalyzed())
+            > ((enemy.lead.getSpd() * you.lead.getBuff( Moves.Status.Spd)* enemy.lead.isParalyzed()))) {
         a = you.lead;
         b = enemy.lead;
         moveA = aMove;
@@ -75,118 +65,220 @@ public static void mainTurn() {
     }
     //overall structure of this is okay. need to change the things inside drastically
     if (moved) {
-        Moves.doMove(a, b, moveA);
-        if (faintChecker()) return;
+        if (!turnStart(a)) {
+            moveA.doMove(a, b);
+            weatherModifier(moveA, a, b);
+            DamageCalc get = new DamageCalc(moveA, b);
+            double Eff = get.getEffectiveness() * get.getEffectiveness2();
+            //debug line
+            getEff(moveA, b, a, get, Eff);
+            if (faintChecker()) return;
+        }
+        if (!turnStart(b)){
+            moveB.doMove(b, a);
+            DamageCalc get = new DamageCalc(moveB, a);
+            double Eff = get.getEffectiveness() * get.getEffectiveness2();
+            //debug line
+            getEff(moveB, b, a, get, Eff);
+            if (faintChecker()) return;
+        }
 
-        Moves.doMove(b, a, moveB);
-        if (faintChecker()) return;
     } else {
-        Moves.doMove(enemy.lead, you.lead, bMove);
+        if (turnStart(enemy.lead)) {
+            bMove.doMove(enemy.lead, you.lead);
+            DamageCalc get = new DamageCalc(bMove, you.lead);
+            double Eff = get.getEffectiveness() * get.getEffectiveness2();
+            getEff(bMove, enemy.lead, you.lead, get, Eff);
+            weatherModifier(bMove, enemy.lead, you.lead);
+            toRainOrNotToRain(enemy.lead, you.lead, bMove);
+            if (faintChecker()) return;
+        }
+
     }
-        /*
-        b.setHp(b.getHp()-getDamage(a, b, moveA));
-        System.out.printf("%s did %d damage!\n", a.getName(), getDamage(a, b, moveB));
+    turnEnd();
+    turns++;
+}
+private boolean turnStart(Summons s){
+    boolean huh = false;
+    if (s.hasStatus(Moves.Status.Par)>0){
+        System.out.printf("%s is Paralyzed!\n", s.getName());
+        int i = rand.nextInt(4);
+        System.out.println(i);
+        if ((i==3)){
+            huh=true;
+            System.out.print("It can't move!\n");
+        }
+    }else if(s.hasStatus(Moves.Status.Slp)>0){
+        System.out.printf("%s is fast Asleep\n!", s.getName());
+    timedSlp++;
+    if (timedSlp==3){
+        System.out.println("It woke up!");
+        s.removeStatus(Moves.Status.Slp);
+        timedSlp=0;
+    }else{huh= true;}
 
-        if (faintChecker()) return;
-
-        a.setHp(b.getHp()-getDamage(b, a, moveB));
-        System.out.printf("%s did %d damage!\n", b.getName(), getDamage(b, a, moveB));
-        if (faintChecker()) return;
-    } else {
-        you.lead.setHp(you.lead.getHp()-getDamage(enemy.lead, you.lead, bMove));
-        if (faintChecker()) return;
     }
-    */
-        turns++;
-
-
+    return huh;
+}
+private void turnEnd(){
+if (Weather != Moves.Status.Null){
+    if (timedWeather == 5){
+        switch (Weather){
+            case Rain : System.out.println("The rain stopped pouring.");
+            case Sun : System.out.println("The sun stopped beating.");
+            default: setWeather(Moves.Status.Null);
+        }
+    }else {
+        switch (Weather){
+            case Rain -> {
+                System.out.println("The rain floods the battlefield!");
+            }
+            case Sun -> {
+                System.out.println("The sun beats down on the battlefield!");
+            }
+        }
+        timedWeather++;
+    }
 
 }
+}
+private void getEff(Moves moveB, Summons a, Summons b, DamageCalc get, double eff) {
+        System.out.printf("type1: %f type2: %f Eff: %f\n", get.getEffectiveness(), get.getEffectiveness2(), eff);
 
-    private static boolean faintChecker() {
-        if (faintHandler()){
-            //you fainted
-            System.out.printf("%s fainted!\n", you.lead.getName());
-            turns++;
-            return true;
-        }else if (!faintHandler()){
-            //enemy fainted
-            System.out.printf("%s fainted!\n", enemy.lead.getName());
-            turns++;
-            return true;
+        if (eff <1){
+            System.out.println("it was not very effective...");
+        } else if (eff >1){
+            System.out.println("It was super effective!");
         }
-        return false;
-    }
+        get = null;
+        toRainOrNotToRain(b, a, moveB);
 
-    public static void WeatherHandler(Moves.Status status){
-    switch(status){
+    }
+public int getTurns() {
+        return turns;
+    }
+public Moves.Status getWeather() {
+        return Weather;
+}
+public void setWeather(Moves.Status weather) {
+    switch(weather){
         case Sun -> Weather = Moves.Status.Sun;
         case Rain -> Weather = Moves.Status.Rain;
 
         case Null -> Weather = Moves.Status.Null;
     }
+}
+public boolean youmoved() {
+    moved = true;
+    return true;
 
 }
-public static double weatherMultiplier(Moves a){
-   double mult = 1.0;
+public void setaMove(Moves a){
+    aMove = a;
+
+}
+public  void setbMove(){
+    //Enemy AI
+    bMove = enemy.lead.moves.get(rand.nextInt(enemy.lead.moves.size()));
+    System.out.printf("");
+}
+public  boolean allFainted(Wizards player) {
+        for (int i = 0; i < player.summons.size(); i++) {
+            if (player.summons.get(i).getHp() > 0) {
+                return false;  // If there's any Pokémon still standing, return false
+            }
+        }
+        return true;  // All Pokémon have fainted
+    }
+private boolean faintChecker() {
+        if (faintHandler()==1){
+            //you fainted
+            System.out.printf("\n%s fainted!\n\n", you.lead.getName());
+            turns++;
+            return true;
+        }else if (faintHandler()==2){
+            //enemy fainted
+            System.out.printf("\n%s fainted!\n\n", enemy.lead.getName());
+            turns++;
+            return true;
+        }
+        return false;
+    }
+public  void weatherModifier(Moves moveA, Summons a, Summons b){
+
     switch (Weather){
        case Sun -> {
-           switch (a.type){
-           case Fire ->mult= 1.5;
-           case Water -> mult= 0.5;
+           switch (moveA.type){
+           case Fire ->{
+               switch (moveA.getSelf()){
+                   case Opposite, Drain, Recoil -> {
+                       b.setHp((b.getHp()-(int)((0.5)*(moveA.damageCalc(a,b)))));
+                   }
+                   case Self -> a.setHp((a.getHp()-(int)((0.01)*(moveA.getBasepower())*(a.getMaxHp()))));
+                   case Both -> {
+                       a.setHp((a.getHp()-(int)((0.5)*(moveA.damageCalc(a,b)))));
+                       b.setHp((b.getHp()-(int)((0.5)*(moveA.damageCalc(a,b)))));
+                   }
+               }
+           }
+           case Water -> {
+               switch (moveA.getSelf()){
+                   case Opposite, Drain, Recoil -> {
+                       b.setHp((b.getHp()+(int)((0.5)*(moveA.damageCalc(a,b)))));
+                   }
+                   case Self -> a.setHp((a.getHp()-(int)((0.01)*(moveA.getBasepower())*(a.getMaxHp()))));
+                   case Both -> {
+                       a.setHp((a.getHp()+(int)((0.5)*(moveA.damageCalc(a,b)))));
+                       b.setHp((b.getHp()+(int)((0.5)*(moveA.damageCalc(a,b)))));
+                   }
+               }
+           }
            }
        }
        case Rain -> {
-           switch (a.type){
-               case Fire ->mult= 0.5;
-               case Water -> mult= 1.5;
+           switch (moveA.type){
+               case Water ->{
+                   switch (moveA.getSelf()){
+                       case Opposite, Drain, Recoil -> {
+                           b.setHp((b.getHp()-(int)((0.5)*(moveA.damageCalc(a,b)))));
+                       }
+                       case Self -> a.setHp((a.getHp()-(int)((0.01)*(moveA.getBasepower())*(a.getMaxHp()))));
+                       case Both -> {
+                           a.setHp((a.getHp()-(int)((0.5)*(moveA.damageCalc(a,b)))));
+                           b.setHp((b.getHp()-(int)((0.5)*(moveA.damageCalc(a,b)))));
+                       }
+                   }
+               }
+               case Fire -> {
+                   switch (moveA.getSelf()){
+                       case Opposite, Drain, Recoil -> {
+                           b.setHp((b.getHp()+(int)((0.5)*(moveA.damageCalc(a,b)))));
+                       }
+                       case Self -> a.setHp((a.getHp()-(int)((0.01)*(moveA.getBasepower())*(a.getMaxHp()))));
+                       case Both -> {
+                           a.setHp((a.getHp()+(int)((0.5)*(moveA.damageCalc(a,b)))));
+                           b.setHp((b.getHp()+(int)((0.5)*(moveA.damageCalc(a,b)))));
+                       }
+                   }
+               }
            }
        }
+
    }
-   return mult;
+
     }
-
-
-private static Boolean faintHandler(){
-    Boolean faintStatus = null;
+private int faintHandler(){
+    int faintStatus = 0;
     if (you.lead.getHp() <=0){
         you.lead.setHp(0);
         you.lead.setFainted(true);
-        faintStatus = true;
+        faintStatus = 1;
 }else if (enemy.lead.getHp() <= 0){
         enemy.lead.setHp(0);
         enemy.lead.setFainted(true);
-        faintStatus = false;
+        faintStatus = 2;
     }
 return faintStatus;
 }
-/*private static int getDamage(Summons attacker, Summons defender, Moves a){
-    double other = 1.0; //used if passives are implemented
-    double damage;
-    double ADratio;
 
-    double burnMult = 1.0;
-    if (attacker.hasStatus(Moves.Status.Burn)){
-        burnMult = 1.5;
-    }
-    double stab = 1.0;
-    if ((attacker.type1 == a.type)||(attacker.type2 == a.type)){
-        stab = 1.5;
-    }
-
-    damage = (44.0/50.0)*a.getBasepower();
-    if (a.getDmg()== Moves.Dmg.Atk){
-        ADratio = (double) attacker.getAtk() /defender.getDef();
-    } else {
-        ADratio = (double) attacker.getSpatk() /defender.getSpdef();
-    }
-    damage = damage * ADratio;
-    damage += 2;
-    WeatherHandler(a.getStatus());
-    damage *= weatherMultiplier(a)*stab*
-            (DamageCalc.getEffectiveness(a.type, defender.type1)*
-                    DamageCalc.getEffectiveness(a.type, defender.type2));
-    damage *= burnMult * other;
-    return (int)damage;
-    }*/
 }

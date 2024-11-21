@@ -6,6 +6,10 @@ public class Game {
     //handles gamestates and their transitions
 
 
+    public GameState getCurrentState() {
+        return currentState;
+    }
+
     public void setState(GameState state) {
         if (currentState != null) {
             currentState.exitState();

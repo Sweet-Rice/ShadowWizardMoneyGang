@@ -26,19 +26,26 @@ public class Driver {
 
     public static void main(String[] args) {
         init();
-
+        Game game = new Game();
         //Moves init
         // sample init Moves tackle = new Moves("tackle", DamageCalc.Type.Normal, Moves.Dmg.Atk, 35,"The user hurls itself at the target.") ;
+
         Moves tackle = new Moves("tackle", DamageCalc.Type.Normal, Moves.Dmg.Atk, 35,30, Moves.Status.Null, Moves.Who.Opposite,"The user hurls itself at the target.") ;
-
-
+        Moves gust = new Moves("gust", DamageCalc.Type.Fly, Moves.Dmg.Spatk, 50, 15, Moves.Status.Rain, Moves.Who.Both, "test");
+        Moves fightingTest = new Moves("fightingTest", DamageCalc.Type.Fighting, Moves.Dmg.Atk, 50, 10, Moves.Status.Burn, Moves.Who.Drain, "hello");
+        Moves sleeper = new Moves("sleeper", DamageCalc.Type.Normal, Moves.Dmg.Spatk, 0, 10, Moves.Status.Slp, Moves.Who.Opposite, "go to sleep");
+        Moves paralyze = new Moves ("paralyzer", DamageCalc.Type.Normal, Moves.Dmg.Spatk, 0, 10, Moves.Status.Par, Moves.Who.Opposite, "turn enemies into my ranked teammates");
         //summmon init
         //sample init
-        Summons myratatta = new Summons("myratatta", DamageCalc.Type.Normal, DamageCalc.Type.Null, 30, 30, 30, 30, 30, 31);
-        myratatta.addMove(tackle); myratatta.addMove(tackle);
+        Summons myratatta = new Summons("myratatta", DamageCalc.Type.Normal, DamageCalc.Type.Null, 30, 30, 30, 30, 40000000, 31);
+        myratatta.addMove(tackle); myratatta.addMove(paralyze); myratatta.addMove(fightingTest); myratatta.addMove(sleeper);
 
-        Summons enemyratatta = new Summons("enemyratatta", DamageCalc.Type.Normal, DamageCalc.Type.Null, 30, 30, 30, 30, 30, 30);
+        Summons enemyratatta = new Summons("enemyratatta", DamageCalc.Type.Normal, DamageCalc.Type.Null, 30, 30, 30, 30, 40, 30);
         enemyratatta.addMove(tackle); enemyratatta.addMove(tackle);
+
+        Summons pidgey = new Summons("pidgey", DamageCalc.Type.Fly, DamageCalc.Type.Normal, 30, 30, 100, 30, 30, 30);
+        pidgey.addMove(tackle); pidgey.addMove(gust);
+
         //Wizard init
         Wizards You = new Wizards("You");
         You.addSummons(myratatta);
@@ -47,6 +54,8 @@ public class Driver {
         Zero.addSummons(enemyratatta);
 
         Wizards One = new Wizards("One");
+        One.addSummons(pidgey);
+
         Wizards Two = new Wizards("Two");
         Wizards Three = new Wizards("Three");
         Wizards Four = new Wizards("Four");
@@ -59,7 +68,7 @@ public class Driver {
         addWizards(Five); addWizards(Six); addWizards(Seven);
 
 
-        Game game = new Game();
+
 
         GameState OutsideBattleState = new OutsideBattleState(game, You);
         game.setState(OutsideBattleState);

@@ -18,7 +18,7 @@ public class OutsideBattleState implements GameState {
         switch (input) {
             case "1"-> /* Fight */ //if player has >0 summons,
                 //else print saying you have no summons
-                    game.setState(new BattleState( you, enemy));/* Fight */
+                    game.setState(new BattleState( game, you, enemy));/* Fight */
             case "2"-> /* Summons */ game.setState(new SummonMenu(game, you));
             default -> System.out.println("Invalid input");
         }

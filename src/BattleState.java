@@ -1,27 +1,23 @@
 
 
 public class BattleState implements GameState{
+    public TurnHandler turnHandler;
+
+    private Game game;
     private final Wizards you;
     private final Wizards enemy;
     private int menu = 0;
 
-    private final String Zero = "Drats!";
-    private final String One = "";
-    private final String Two = "";
-    private final String Three = "";
-    private final String Four = "";
-    private final String Five = "";
-    private final String Six = "";
-    private final String Seven = "";
 
-
-    public BattleState( Wizards you, Wizards enemy) {
+    public BattleState(Game game, Wizards you, Wizards enemy) {
     this.you = you;
     this.enemy = enemy;
+    turnHandler = new TurnHandler(game, you, enemy);
+    this.game = game;
 }
 
     public void enterState() {
-        TurnHandler TurnHandler = new TurnHandler(you, enemy);
+        TurnHandler turnHandler = new TurnHandler(game, you, enemy);
 
     }
 
@@ -49,31 +45,31 @@ public class BattleState implements GameState{
             if (x<= you.lead.moves.size()){
                 switch (x){
                     case 1 -> {
-                        TurnHandler.setaMove(you.lead.moves.getFirst());
-                        if (TurnHandler.youmoved()) {
-                            TurnHandler.mainTurn();
+                        turnHandler.setaMove(you.lead.moves.getFirst());
+                        if (turnHandler.youmoved()) {
+                            turnHandler.mainTurn();
                             menu = 0;
                         }
                     }
                     case 2 -> {
-                        TurnHandler.setaMove(you.lead.moves.get(1));
-                        if (TurnHandler.youmoved()) {
-                            TurnHandler.mainTurn();
+                        turnHandler.setaMove(you.lead.moves.get(1));
+                        if (turnHandler.youmoved()) {
+                            turnHandler.mainTurn();
                             menu = 0;
                         }
                     }
                     case 3 -> {
-                        TurnHandler.setaMove(you.lead.moves.get(2));
-                        if (TurnHandler.youmoved()) {
-                            TurnHandler.mainTurn();
+                        turnHandler.setaMove(you.lead.moves.get(2));
+                        if (turnHandler.youmoved()) {
+                            turnHandler.mainTurn();
                             menu = 0;
                         }
 
                     }
                     case 4 -> {
-                        TurnHandler.setaMove(you.lead.moves.get(3));
-                        if (TurnHandler.youmoved()) {
-                            TurnHandler.mainTurn();
+                        turnHandler.setaMove(you.lead.moves.get(3));
+                        if (turnHandler.youmoved()) {
+                            turnHandler.mainTurn();
                             menu = 0;
                         }
                     }
@@ -117,7 +113,7 @@ public class BattleState implements GameState{
                     if (!you.summons.getFirst().isFainted()) {
                         System.out.printf("Come back, %s! Go, %s!\n", you.lead.getName(), you.summons.getFirst().getName());
                         you.setLead(you.summons.getFirst());
-                        TurnHandler.mainTurn();
+                        turnHandler.mainTurn();
                         menu = 0;
                     } else {
                         System.out.println(you.summons.getFirst().getName() + "is fainted!");
@@ -127,7 +123,7 @@ public class BattleState implements GameState{
                     if (!you.summons.get(1).isFainted()) {
                         System.out.printf("Come back, %s! Go, %s!\n", you.lead.getName(), you.summons.get(1).getName());
                         you.setLead(you.summons.get(1));
-                        TurnHandler.mainTurn();
+                        turnHandler.mainTurn();
                         menu = 0;
                     } else {
                         System.out.println(you.summons.get(1).getName() + "is fainted!");
@@ -137,7 +133,7 @@ public class BattleState implements GameState{
                     if (!you.summons.get(2).isFainted()) {
                         System.out.printf("Come back, %s! Go, %s!\n", you.lead.getName(), you.summons.get(2).getName());
                         you.setLead(you.summons.get(2));
-                        TurnHandler.mainTurn();
+                        turnHandler.mainTurn();
                         menu = 0;
                     } else {
                         System.out.println(you.summons.get(2).getName() + "is fainted!");
@@ -147,7 +143,7 @@ public class BattleState implements GameState{
                     if (!you.summons.get(3).isFainted()) {
                         System.out.printf("Come back, %s! Go, %s!\n", you.lead.getName(), you.summons.get(3).getName());
                         you.setLead(you.summons.get(3));
-                        TurnHandler.mainTurn();
+                        turnHandler.mainTurn();
                         menu = 0;
                     } else {
                         System.out.println(you.summons.get(3).getName() + " is fainted!");
@@ -166,31 +162,43 @@ public class BattleState implements GameState{
 
     public void update() {
 
-        if (TurnHandler.allFainted(you)){
+        if (turnHandler.allFainted(you)){
             System.out.println("All your summons have fainted! You blacked out!");
             System.exit(0);
         }
-        if (TurnHandler.allFainted(enemy)){
+        if (turnHandler.allFainted(enemy)){
             System.out.printf("All %s's summons have fainted! You won!\n %s \n",enemy.getName(),winMessage(enemy.getName()));
+            Driver.wins++;
+            //save wins
+
+            game.setState(new OutsideBattleState(game, you));
         }
-        System.out.println("Turn " + TurnHandler.getTurns());
+
         if (you.lead.isFainted()){
          menu = 3;
         }
     }
     private String winMessage(String wiz) {
         String s = "shouldn't be able to read this";
+        String zero = "Zero: Drats!";
+        String one = "One: ";
+        String two = "Two: ";
+        String three = "Three: ";
+        String four = "Four: ";
+        String five = "Five: ";
+        String six = "Six: ";
+        String seven = "Seven: ";
         switch (wiz){
-            case "Zero" -> s = Zero;
-            case "One" -> s = One;
-            case "Two" -> s = Two;
-            case "Three" -> s = Three;
-            case "Four" -> s = Four;
-            case "Five" -> s = Five;
-            case "Six" -> s = Six;
-            case "Seven" -> s = Seven;
+            case "Zero" -> s = zero;
+            case "One" -> s = one;
+            case "Two" -> s = two;
+            case "Three" -> s = three;
+            case "Four" -> s = four;
+            case "Five" -> s = five;
+            case "Six" -> s = six;
+            case "Seven" -> s = seven;
         }
-        return s;
+        return s + "\n";
     }
     public void exitState() {
         //if player loses, lose message
@@ -252,7 +260,7 @@ public void showStats(){
             System.out.print("     ");
             for (int i = 0; i<you.lead.getName().length()+12; i++){
                 System.out.print("_");
-            }System.out.print("\n");
+            }System.out.print("\n\n");
 
         }
 
