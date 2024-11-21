@@ -11,16 +11,23 @@ public class Driver {
     }
 
     public static Wizards getEnemy(){
-        return switch (wins) {
-            case 1 -> GymLeaders.get(1);
-            case 2 -> GymLeaders.get(2);
-            case 3 -> GymLeaders.get(3);
-            case 4 -> GymLeaders.get(4);
-            case 5 -> GymLeaders.get(5);
-            case 6 -> GymLeaders.get(6);
-            case 7 -> GymLeaders.get(7);
-            default -> GymLeaders.get(0);
-        };
+        Wizards wiz;
+        switch (wins) {
+            case 1 -> wiz = GymLeaders.get(1);
+            case 2 -> wiz = GymLeaders.get(2);
+            case 3 -> wiz = GymLeaders.get(3);
+            case 4 -> wiz = GymLeaders.get(4);
+            case 5 -> wiz = GymLeaders.get(5);
+            case 6 -> wiz = GymLeaders.get(6);
+            case 7 -> wiz = GymLeaders.get(7);
+            case 0 -> wiz = GymLeaders.get(0);
+            default -> {
+                System.out.print("CONGRATULATIONS! You managed to defeat every Gym Leader!\nYou have successfully been initiated into the \"Shadow Wizard Money Gang!!! \"");
+                System.exit(1);
+                wiz = GymLeaders.getFirst();
+            }
+        }
+        return wiz;
     }
 
 

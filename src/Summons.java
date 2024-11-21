@@ -27,6 +27,19 @@ public class Summons {
     private final int maxhp;
     private Moves.Status status = Moves.Status.Null;
     public ArrayList<Moves.Status> statuses;
+   //status effect timers
+    public int timedAtk = 0;
+    public int timedDef = 0;
+    public int timedSpAtk = 0;
+    public int timedSpDef = 0;
+    public int timedSpd = 0;
+
+    public int timedPois = 0;
+    public int timedPar = 0;
+    public int timedBurn = 0;
+    public int timedSlp = 0;
+
+
 
 
 
@@ -190,6 +203,7 @@ public class Summons {
             case Atk -> {
                 if (!(hasStatus(Moves.Status.Atk)>5)){
                     statuses.add(Moves.Status.Atk);
+                    this.timedAtk = 0;
                     System.out.println("Attack rose!");
                 }else {
                     System.out.println("Attack can't go any higher!");
@@ -198,6 +212,7 @@ public class Summons {
             case Def -> {
                 if (!(hasStatus(Moves.Status.Def)>5)){
                     statuses.add(Moves.Status.Def);
+                    this.timedDef = 0;
                     System.out.println("Defense rose!");
                 } else {
                     System.out.println("Defense can't go any higher!");
@@ -206,6 +221,7 @@ public class Summons {
             case Spd -> {
                 if (!(hasStatus(Moves.Status.Spd)>5)){
                     statuses.add(Moves.Status.Spd);
+                    this.timedSpd = 0;
                     System.out.println("Speed rose!");
                 } else {
                     System.out.println("Speed can't go any higher!");
@@ -214,6 +230,7 @@ public class Summons {
             case SpAtk -> {
                 if (!(hasStatus(Moves.Status.SpAtk)>5)){
                     statuses.add(Moves.Status.SpAtk);
+                    this.timedSpAtk = 0;
                     System.out.println("Special Attack rose!");
                 } else {
                     System.out.println("Special Attack can't go any higher!");
@@ -222,6 +239,7 @@ public class Summons {
             case SpDef -> {
                 if (!(hasStatus(Moves.Status.SpDef)>5)){
                     statuses.add(Moves.Status.SpDef);
+                    this.timedSpDef = 0;
                     System.out.println("Special Defense rose!");
 
                 } else {
@@ -231,6 +249,7 @@ public class Summons {
             case LessAtk -> {
                 if (!(hasStatus(Moves.Status.LessAtk)>5)){
                     statuses.add(Moves.Status.LessAtk);
+                    this.timedAtk =0;
                     System.out.println("Attack fell!");
                 } else {
                     System.out.println("Attack can't go any lower!");
@@ -239,6 +258,7 @@ public class Summons {
             case LessDef -> {
                 if (!(hasStatus(Moves.Status.LessDef)>5)){
                     statuses.add(Moves.Status.LessDef);
+                    this.timedDef = 0;
                     System.out.println("Defense fell!");
                 }else {
                     System.out.println("Defense can't go any lower!");
@@ -247,6 +267,7 @@ public class Summons {
             case LessSpAtk -> {
                 if (!(hasStatus(Moves.Status.LessSpAtk)>5)){
                     statuses.add(Moves.Status.LessSpAtk);
+                    this.timedSpAtk = 0;
                     System.out.println("SpAtk fell!");
                 } else {
                     System.out.println("SpAtk can't go any lower!");
@@ -255,6 +276,7 @@ public class Summons {
             case LessSpDef -> {
                 if (!(hasStatus(Moves.Status.LessSpDef)>5)){
                     statuses.add(Moves.Status.LessSpDef);
+                    this.timedSpDef = 0;
                     System.out.println("Special Defense fell!");
                 }
                 else {
@@ -264,6 +286,7 @@ public class Summons {
             case LessSpd -> {
                 if (!(hasStatus(Moves.Status.LessSpd)>5)){
                     statuses.add(Moves.Status.LessSpd);
+                    this.timedSpd = 0;
                     System.out.println("Special Defense fell!");
                 }
                 else {
