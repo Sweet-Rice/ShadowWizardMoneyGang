@@ -48,6 +48,11 @@ public class Summons {
     private int timedBurn = 0;
     private int timedSlp = 0;
 
+    /*
+    getStatTimer - getter for the variable that tracks a statbuff
+    @status - the statbuff to be found
+    @return - the timer on the statbuff
+     */
     public int getStatTimer(Moves.Status status) {
         int stat = -1;
         switch (status) {
@@ -85,6 +90,11 @@ public class Summons {
         }
         return stat;
     }
+    /*
+    getStatTimeTick - ticks one of the statTimer variables
+    @status - the status that will specify the stattimer to be ticked
+    @return - void
+     */
     public void statTimerTick(Moves.Status status){
         switch (status) {
             case Atk -> {
@@ -118,6 +128,11 @@ public class Summons {
         }
 
     }
+    /*
+    statTimerZero - sets statTimer to zero
+    @status - the status of the stattimer that gets reset
+    @return - void
+     */
     public void statTimerZero(Moves.Status status){
         switch (status) {
             case Atk -> {
@@ -152,21 +167,23 @@ public class Summons {
     }
 
 
+    /*
+    Summons - constructor
+    @name - name of the summon
+    @type1 - the first type of the summon
+    @type2 - the second type of the summon
+    @atk - the atk value
+    @spatk - the spatk value
+    @def- the def value
+    @spdef- the spdef value
+    @maxhp - the maxhp value
+    @spd - the spd value
+    @return -
+     */
     public Summons(String name, DamageCalc.Type type1, DamageCalc.Type type2,
                    int atk, int spatk, int def, int spdef, int maxhp, int spd){
-        /*
-    Methodname Summons - serves as a constructor method to define all stats of each summon.
-    @param name - name of the summon
-    @param type1 - first type of the summon
-    @param type2 - second type of summon
-    @param atk - attack value of the summon
-    @param spatk - special attack value of the summon
-    @param def - defense value of the summon
-    @param spdef - special defense value of the summon
-    @param hp - health points of the summon
-    @param spd - speed value of the summon
 
-     */
+
        this.name = name;
        this.type1 = type1;
        this.type2 = type2;
@@ -181,41 +198,100 @@ public class Summons {
        this.statuses = new ArrayList<>();
     }
 
+    /*
+    getMoves - getter for the arraylist of moves of the summon
+    @param - none
+    @return - the list of moves
+     */
     public ArrayList<Moves> getMoves() {
     return moves;
     }
+
+    /*
+    getStatuses - getter for the arraylist of statuses
+    @param - none
+    @return - the list of statuses
+     */
     public ArrayList<Moves.Status> getStatuses() {
         return statuses;
     }
 
     //ORGANIZATION!!!!!!
     //getter functions
-
+    /*
+    getName - the getter for the name of the summon
+    @param - none
+    @return - the name var
+     */
     public String getName(){
         return name;
     }
+
+    /*
+    getAtk - the getter for the Atk var
+    @param - none
+    @return - the atk var
+     */
     public int getAtk(){
         return atk;
     }
+    /*
+    getSpatk - the getter for the Spatk var
+    @param - none
+    @return - the Spatk var
+     */
     public int getSpatk(){
         return spatk;
     }
+
+    /*
+    getDef - the getter for the def var
+    @param - none
+    @return -  the def var
+     */
     public int getDef(){
         return def;
     }
+
+
+    /*
+    getSpdef - the getter for the SpDef var
+    @param - none
+    @return -  the SpDef var
+     */
     public int getSpdef(){
         return spdef;
     }
+    /*
+    getSpd - the getter for the Spd var
+    @param - none
+    @return -  the Spd var
+     */
     public int getSpd(){
         return spd;
     }
+    /*
+    getHp - the getter for the hp var
+    @param - none
+    @return -  the hp var
+     */
     public int getHp(){
         return hp;
     }
+
+    /*
+    getMaxHp- the getter for the MaxHp var
+    @param - none
+    @return - MaxHp var
+     */
     public  int getMaxHp(){
         return maxhp;
     }
-
+    /*
+    removeStatus - removes a specific status from the summon
+    @status - the status to be removed
+    @return - void
+     */
     public void removeStatus(Moves.Status status){
         for (int i = 0; i < statuses.size(); i++){
             if (statuses.get(i) == status){
@@ -224,6 +300,12 @@ public class Summons {
             }
         }
     }
+
+    /*
+    getBuff - the getter for the statbuffs on the summon
+    @status - the statbuffs to be found
+    @return - the multiplier on the statbuff
+     */
     public double getBuff( Moves.Status status){
         int x = 0;
         double modifier;
@@ -243,6 +325,12 @@ public class Summons {
         }
         return modifier;
     }
+
+    /*
+    BuffsToString - turns the list of buffs into a readable string
+    @param - none
+    @return - a string of buffs
+     */
     public String BuffsToString(){
         String output = "";
         if (getBuff(Moves.Status.Atk)>1.0){
@@ -262,6 +350,12 @@ public class Summons {
         }
         return output;
     }
+
+    /*
+    hasStatus - checks if the summon has a particular status
+    @status - the status to be checked
+    @return - how many iterations of the status the summon has
+     */
     public int hasStatus(Moves.Status status){
         int x = 0;
         for(int i = 0; i < statuses.size(); i++){
@@ -271,9 +365,20 @@ public class Summons {
         }
         return x;
     }
+    /*
+    isFainted - checks if the summon is fainted
+    @param - none
+    @return - fainted or not
+     */
     public boolean isFainted(){
         return fainted;
     }
+
+    /*
+    isParalyzed - checks if the summon is paralyzed
+    @param - none
+    @return - para or not
+     */
     public double isParalyzed(){
         double paralyzed = 1.0;
         if (status == Moves.Status.Par) {
@@ -284,12 +389,28 @@ public class Summons {
 
 
     //setter functions!!!!
+   /*
+    setHp - sets the summons hp
+    @param - the hp to be set
+    @return - void
+     */
     public void setHp(int hp){
         this.hp = hp;
     }
+    /*
+    setFainted - sets the summon fainted
+    @fainted - if the summmon is fainted or not
+    @return - void
+     */
     public void setFainted(boolean fainted){
         this.fainted = fainted;
     }
+
+    /*
+    reset - resets the summon and its moves
+    @param - none
+    @return - void
+     */
     public void reset(){
         this.hp = maxhp;
         this.fainted = false;
@@ -298,6 +419,11 @@ public class Summons {
         }
     }
     // genuine utility
+    /*
+    MoveToString - converts the moves list to a readable string
+    @param -none
+    @return - string of moves
+     */
     public String MovesToString() {
         String output = "";
 
@@ -310,9 +436,20 @@ public class Summons {
         }
         return output;
     }
+    /*
+    addMove - adds moves
+    @move - the move to be added
+    @return - void
+     */
     public void addMove(Moves move){
         moves.add(move);
     }
+
+    /*
+    addStatuses - adds statuses to the summon
+    @status - status to be added
+    @return - void
+     */
     public void addStatuses(Moves.Status status){
         switch (status){
             case Null-> {
@@ -467,6 +604,12 @@ public class Summons {
             }
         }
     }
+
+    /*
+    getStatusName - getter for the name of the exclusive statuses
+    @param - none
+    @return - void
+     */
     public String getStatusName(){
         String status = "";
         for (int i = 0; i < statuses.size(); i++) {
@@ -483,6 +626,7 @@ public class Summons {
 
     //override
     @Override
+    //overrides the default toString function to make summon+hp easier
     public String toString() {
         return this.name +": " + this.hp + "/" + this.maxhp + "hp";
     }

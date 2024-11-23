@@ -20,11 +20,26 @@ private int timedWeather = 0;
 private Summons a;
 private Summons b;
 
+    /*
+        TurnHandler - constructor
+        @game - game object for method usage
+        @you -  you object for method usage and player reference
+        @enemy - enemy object for method usage and enemy reference
+         */
+
 public TurnHandler(Game game, Wizards you, Wizards enemy) {
         this.you = you;
         this.enemy = enemy;
         this.game = game;
     }
+
+    /*
+    toRainorNotToRain - checks if it should Rain or be Sunny or be Null, if not it applies status
+    @user - the user of the move
+    @nonUser - the nonuser of the move
+    @move - the move being used
+    @return - void
+     */
 public void toRainOrNotToRain(Summons user, Summons nonUser, Moves move) {
         switch (move.getStatus()){
             case Sun -> {
@@ -49,6 +64,11 @@ public void toRainOrNotToRain(Summons user, Summons nonUser, Moves move) {
 
     }
 
+    /*
+    mainturn - what happens in a single turn
+    @param - none
+    @return - void
+     */
 public void mainTurn() {
     System.out.println("__________________________________________________________________________________________________________");
 
@@ -81,7 +101,7 @@ public void mainTurn() {
             DamageCalc get = new DamageCalc(moveA, b);
             double Eff = get.getEffectiveness() * get.getEffectiveness2();
             //debug line
-            getEff(moveA, b, a, get, Eff);
+            getEff(get, Eff);
             toRainOrNotToRain(a, b, moveA);
             if (faintChecker()) return;
         }
@@ -92,7 +112,7 @@ public void mainTurn() {
             DamageCalc get = new DamageCalc(moveB, a);
             double Eff = get.getEffectiveness() * get.getEffectiveness2();
             //debug line
-            getEff(moveB, b, a, get, Eff);
+            getEff(get,  Eff);
             toRainOrNotToRain(a, b, moveA);
             if (faintChecker()) return;
 
@@ -105,7 +125,7 @@ public void mainTurn() {
 
             DamageCalc get = new DamageCalc(bMove, you.getLead());
             double Eff = get.getEffectiveness() * get.getEffectiveness2();
-            getEff(bMove, enemy.getLead(), you.getLead(), get, Eff);
+            getEff( get, Eff);
             weatherModifier(bMove, enemy.getLead(), you.getLead());
             toRainOrNotToRain(enemy.getLead(), you.getLead(), bMove);
             if (faintChecker()) return;
@@ -120,6 +140,12 @@ public void mainTurn() {
     turns++;
 
 }
+
+    /*
+        turnStart - things that are checked and updated at the start of the turn for a summon
+        @s - the summon being checked
+        @return - whether the summon can move or not
+         */
 private boolean turnStart(Summons s){
     boolean huh = false;
     if (s.hasStatus(Moves.Status.Par)>0){
@@ -151,6 +177,12 @@ private boolean turnStart(Summons s){
     }
     return huh;
 }
+
+    /*
+        turnEnd - all the things that get checked and updated at the end of a turn
+        @param -none
+        @return - void
+         */
 private void turnEnd(){
 //Weather check
     if (Weather != Moves.Status.Null){
@@ -181,6 +213,11 @@ private void turnEnd(){
     //damage status check
 
 }
+    /*
+        damageStatusCheck - updates the damage that should take place if Burn or Poison is active
+        @s - the summon to be checked
+        @return - void
+         */
 private void damageStatusCheck(Summons s){
     if (s.hasStatus(Moves.Status.Burn)>0){
         s.statTimerTick(Moves.Status.Burn);
@@ -210,6 +247,11 @@ private void damageStatusCheck(Summons s){
 
 }
 
+    /*
+        statModCheck - checks the statmodtimers and reacts accordingly
+        @s - summon to be checked and updated
+        @return - void
+         */
 private void statModCheck(Summons s){
     if (s.getBuff(Moves.Status.Spd)>0){
         s.statTimerTick(Moves.Status.Spd);
@@ -299,7 +341,14 @@ private void statModCheck(Summons s){
     }
 
 }
-private void getEff(Moves moveB, Summons a, Summons b, DamageCalc get, double eff) {
+
+    /*
+        getEff -prints the effectiveness of a move
+        @get - the DamageCalc object
+        @eff - the effectiveness as a double
+        @return - void
+         */
+private void getEff( DamageCalc get, double eff) {
         //System.out.printf("type1: %f type2: %f Eff: %f\n", get.getEffectiveness(), get.getEffectiveness2(), eff);
 
         if (eff <1){
@@ -311,12 +360,12 @@ private void getEff(Moves moveB, Summons a, Summons b, DamageCalc get, double ef
 
 
     }
-public int getTurns() {
-        return turns;
-    }
-public Moves.Status getWeather() {
-        return Weather;
-}
+
+    /*
+    setWeather - sets the weather
+    @weather - weather to be set
+    @return - void
+     */
 public void setWeather(Moves.Status weather) {
     switch(weather){
         case Sun -> Weather = Moves.Status.Sun;
@@ -325,20 +374,40 @@ public void setWeather(Moves.Status weather) {
         case Null -> Weather = Moves.Status.Null;
     }
 }
+    /*
+        youmoved - sets moved to true and returns true
+        @param - none
+        @return - true
+         */
 public boolean youmoved() {
     moved = true;
     return true;
 
 }
+    /*
+        setaMove - sets the mvoe for the summon that moves first
+        @a - the move of the summon that goes first
+        @return - void
+         */
 public void setaMove(Moves a){
     aMove = a;
 
 }
+    /*
+        setbMove - sets the mopve for the summon that moves second
+        @a - the move of the summon that goes second
+        @return - void
+         */
 public  void setbMove(){
     //Enemy AI
     bMove = enemy.getLead().getMoves().get(rand.nextInt(enemy.getLead().getMoves().size()));
     System.out.printf("");
 }
+    /*
+        allFainted - checks if all a wizard's summons are fainted
+        @player - the wizard to be checked
+        @return - all fainted or not
+         */
 public  boolean allFainted(Wizards player) {
         for (int i = 0; i < player.getSummons().size(); i++) {
             if (player.getSummons().get(i).getHp() > 0) {
@@ -347,6 +416,11 @@ public  boolean allFainted(Wizards player) {
         }
         return true;  // All Pokémon have fainted
     }
+    /*
+    faintChecker - checks if you or enemy's lead summon is fainted
+    @param - none
+    @return - if fainted or not
+     */
 private boolean faintChecker() {
         if (faintHandler()==1){
             //you fainted
@@ -380,6 +454,13 @@ private boolean faintChecker() {
         }
         return false;
     }
+    /*
+    weatherModifier - does the damage done by the move in conjunction with the weather
+    @moveA - the move being used
+    @a- the user
+    @b- the nonuser
+    @return - void
+     */
 public  void weatherModifier(Moves moveA, Summons a, Summons b){
 
     switch (Weather){
@@ -443,6 +524,11 @@ public  void weatherModifier(Moves moveA, Summons a, Summons b){
    }
 
     }
+    /*
+    faintHandler - handles how fainting is done
+    @param - none
+    @return - whether enemy is fainted, you are fainted, or no one is
+     */
 private int faintHandler(){
     int faintStatus = 0;
     if (you.getLead().getHp() <=0){

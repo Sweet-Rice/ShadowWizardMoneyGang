@@ -5,14 +5,27 @@ public class Driver {
     public static ArrayList<Summons> AllSummons = new ArrayList<>();
     private static int wins;
 
-
+    /*
+    win - just ticks the wins variable
+    @param - none
+    @return - void
+     */
     public static void win(){
     wins++;
     }
+    /*
+    getWins - getter for the wins variable
+    @param - none
+    @return - wins variable
+     */
     public static int getWins(){
         return wins;
     }
-
+    /*
+    getAllSummons - getter for the information of all the summons in play
+    @param - none
+    @return - string of all the info
+     */
     public static String getAllSummons(){
         String output = "";
         for (int i = 0; i < AllSummons.size(); i++){
@@ -21,10 +34,19 @@ public class Driver {
         }
         return output;
     }
-
+    /*
+    addWizards - adds wizards to the gymleaders arraylist
+    @wizard - the wizard to be added
+    @return - void
+     */
     private static void addWizards(Wizards wizard){
         GymLeaders.add(wizard);
     }
+    /*
+    init - startup message
+    @param - none
+    @return - void
+     */
     private static void init(){
         System.out.println("__________________________________________________________________________________________________________");
         System.out.print("\n");
@@ -36,6 +58,11 @@ public class Driver {
         System.out.print("\n");
     }
 
+    /*
+    getEnemy - getter for enemy to fight
+    @param - none
+    @return - returns the wizard that you are meant to fight
+     */
     public static Wizards getEnemy(){
         Wizards wiz;
         switch (wins) {
@@ -61,7 +88,11 @@ public class Driver {
         return wiz;
     }
 
-
+    /*
+    main - the main method
+    @param - none
+    @return - void
+     */
     public static void main(String[] args) {
         init();
         Game game = new Game();

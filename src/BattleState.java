@@ -10,7 +10,11 @@ public class BattleState implements GameState{
     private int menu = 0;
     private Random rand = new Random();
 
+    /*
+    BattleState - Constructor for the BattleState
+    @game - refers to Game class, to utilize setState
 
+     */
     public BattleState(Game game, Wizards you, Wizards enemy) {
     this.you = you;
     this.enemy = enemy;
@@ -18,11 +22,13 @@ public class BattleState implements GameState{
     this.game = game;
 }
 
+    //explained in GameState.java
     public void enterState() {
         TurnHandler turnHandler = new TurnHandler(game, you, enemy);
 
     }
 
+    //explained in GameState.java
     public void handleInput(String input) {
     switch (menu){
         case 0 -> {
@@ -92,6 +98,7 @@ public class BattleState implements GameState{
 
     }
 
+    //explained in GameState.java
     public void update() {
 
         if (turnHandler.allFainted(you)){
@@ -114,6 +121,7 @@ public class BattleState implements GameState{
         }
     }
 
+    //Explained in GameStatejava
     public void showMenu() {
         System.out.println("__________________________________________________________________________________________________________");
 
@@ -148,6 +156,11 @@ public class BattleState implements GameState{
 
     }
 
+    /*
+    winMessage - creates a win message
+    @wiz - name of wizard that gets defeated
+    @return - returns the win message as a string
+     */
     private String winMessage(String wiz) {
         String s = "shouldn't be able to read this";
         String zero = "Zero: Drats!";
@@ -171,6 +184,11 @@ public class BattleState implements GameState{
         return s + "\n";
     }
 
+    /*
+    switcher - provides the summon switching functionality based on menu variable
+    @x - menu variable. voluntary switch or switch after fainted
+    @return - void
+     */
     private void switcher(int x) {
         if (x <= you.getSummons().size()){
             switch (x) {
@@ -225,6 +243,11 @@ public class BattleState implements GameState{
         }
     }
 
+    /*
+    showStats - shows the stats that concern the player's and the enemy's lead summons
+    @param - none
+    @return - void
+     */
     public void showStats(){
         if (!enemy.getLead().isFainted()){
             System.out.print("\n");

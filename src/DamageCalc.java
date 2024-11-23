@@ -23,14 +23,28 @@ public class DamageCalc {
             /* Null     */{    1.0,  1.0,   1.0,      1.0,   1.0, 1.0,      1.0,    1.0,    1.0, 1.0,     1.0, 1.0,  1.0,   1.0,    2.0, 1.0}
     };
 
+    /*
+    getEffectiveness - provides the effectiveness of the attack on the defender's first type
+    @param - none
+    @return - the damage multiplier
+     */
    public double getEffectiveness() {
        return Effectiveness[attack.type.ordinal()][defender.getType1().ordinal()];
    }
-
+    /*
+    getEffectiveness1 - provides the effectiveness of the attack on the defender's second type
+    @param - none
+    @return - the damage multiplier
+     */
    public double getEffectiveness2() {
        return  Effectiveness[attack.type.ordinal()][defender.getType2().ordinal()];
    }
 
+    /*
+    DamageCalc - constructor
+    @attacker - provides DamageCalc access to the object of the Move class
+    @defender - provides DamageCalc access to the object of the Summons class
+     */
     public DamageCalc(Moves attacker, Summons defender) {
         this.attack = attacker;
         this.defender = defender;

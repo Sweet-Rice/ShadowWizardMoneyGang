@@ -3,19 +3,25 @@ public class SummonState implements GameState {
     private Game game;
     private int delete = 0;
 
+    /*
+    SummonState - constructor for the summonstate
+    @game - game object for usage of its methods
+    @you - wizards object for usage of its methods and reference to the player
+
+     */
     public SummonState(Game game, Wizards you) {
         this.game = game;
         this.you = you;
     }
 
-
+    //explained in GameState
     public void enterState() {
     System.out.println("Welcome to the SummonMenu, where you can add or delete summons in your party. Press d to toggle delete mode or q to quit.");
     System.out.printf("Your current party: %s ", you);
 
     }
 
-    @Override
+    //explained in GameState
     public void handleInput(String input) {
 
         switch (delete){
@@ -84,12 +90,12 @@ public class SummonState implements GameState {
 
     }
 
-    @Override
+    //explained in GameState
     public void update() {
 
     }
 
-    @Override
+    //explained in GameState
     public void showMenu() {
         System.out.println("__________________________________________________________________________________________________________");
         switch (delete){
@@ -108,6 +114,11 @@ public class SummonState implements GameState {
         }
     }
 
+    /*
+    printParty - prints the party of the player
+    @param - none
+    @return - void
+     */
     private void printParty() {
         String s = "";
         for (int i = 0; i<you.getSummons().size(); i++){
@@ -117,6 +128,11 @@ public class SummonState implements GameState {
         System.out.print(s);
     }
 
+    /*
+    isInteger - checks if a string is an integer
+    @s - the string to be checked
+    @return - if its a int or not
+     */
     private static boolean isInteger(String s) {
         try {
             Integer.parseInt(s);

@@ -17,10 +17,27 @@ public class Moves {
     private final Who self;
     //private TurnHandler turnHandler;
 
+    /*
+    ppToString - does pp/maxpp in a less time consuming manner than typing it manually
+    @param - none
+    @return - string of "pp/maxpp"
+     */
     public String ppToString(){
         return ""+ this.pp + "/" + this.maxpp + " PP";
     }
 
+    /*
+    Moves - constructor
+    @name - name of the move
+    @type - the type of the move's damage
+    @dmg - the type of damage the move does (Atk or Spatk)
+    @bp - the basepower of the move for use in damagecalc
+    @maxpp - the max pp the move can have
+    @status - the status effect the move applies
+    @self - who the move affects
+    @description - the description of the move
+
+     */
     public Moves( String name, DamageCalc.Type type, Dmg dmg, int bp, int maxpp, Status status, Who self, String description) {
         this.name = name;
         this.type = type;
@@ -35,37 +52,84 @@ public class Moves {
 
     }
 
+    /*
+    getPp - getter method to get the current amount of pp
+    @param - none
+    @return - pp variable
+     */
     public int getPp() {
         return pp;
     }
 
+    /*
+    getSelf - getter function for the move's target
+    @param - none
+    @return - self variable
+     */
     public Who getSelf() {
         return self;
     }
 
+    /*
+    getStatuses - getter function for the status the move applies
+    @param - none
+    @return - status variable
+     */
     public Status getStatus() {
         return status;
     }
 
+    /*
+    getBasepower - getter function for the basepower the move has
+    @param - none
+    @return - basepower variable
+     */
     public int getBasepower() {
         return basepower;
     }
 
+    /*
+    getDmg - getter method for the type of damage the move does
+    @param - none
+    @return - dmg variable
+     */
     public Dmg getDmg() {
         return dmg;
     }
 
+    /*
+    getDescription - getter method for the string of the description
+    @param - none
+    @return - description variable
+     */
     public String getDescription() {
         return description;
     }
 
+    /*
+    getName - getter function for the name of the move
+    @param - none
+    @return - name variable
+     */
     public String getName() {
         return name;
     }
+
+    /*
+    reset - resets the moves pp
+    @param - none
+    @return - void
+     */
     public void reset(){
-        pp = maxpp;
+        this.pp = this.maxpp;
     }
     //idea for implementing
+    /*
+    doMove - does the damage the move is supposed to do
+    @user - the user of the move
+    @nonuser - the nonuser of the move
+    @return - void
+     */
     public void doMove(Summons user, Summons nonUser) {
         System.out.print("\n\n");
     switch (self){
@@ -113,6 +177,12 @@ public class Moves {
     }
     }
 
+    /*
+    damageCalc - calculates the damage supposed to be done to the recipient
+    @user - the user of the move
+    @nonuser - the nonuser of the move
+    @return - the amount of damage that is done to the recipient
+     */
     public int damageCalc(Summons user, Summons nonUser) {
 
 
@@ -155,6 +225,7 @@ public class Moves {
 
 
     @Override
+    //Overrides the default toString method to preturn custom String output
     public String toString() {
         return  name + "\t" + type + "\t" + dmg + "\t" + basepower + "\t" + ppToString();
     }
