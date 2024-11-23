@@ -3,10 +3,6 @@ public class DamageCalc {
     private Moves attack;
    private Summons defender;
 
-   public DamageCalc(Moves attacker, Summons defender) {
-       this.attack = attacker;
-       this.defender = defender;
-   }
     public static final double[][] Effectiveness = {
             //              Normal, Fire, Water, Electric, Grass, Ice, Fighting, Poison, Ground, Fly, Psychic, Bug, Rock, Ghost, Dragon, Null
             /* Normal   */{    1.0,  1.0,   1.0,      1.0,   1.0, 1.0,      1.0,    1.0,    1.0, 1.0,     1.0, 1.0,  0.5,   0.0,    1.0, 1.0},
@@ -28,16 +24,17 @@ public class DamageCalc {
     };
 
    public double getEffectiveness() {
-       return Effectiveness[attack.type.ordinal()][defender.type1.ordinal()];
+       return Effectiveness[attack.type.ordinal()][defender.getType1().ordinal()];
    }
+
    public double getEffectiveness2() {
-       return  Effectiveness[attack.type.ordinal()][defender.type2.ordinal()];
+       return  Effectiveness[attack.type.ordinal()][defender.getType2().ordinal()];
    }
-   /*
-   public int doDamage() {
-       //
+
+    public DamageCalc(Moves attacker, Summons defender) {
+        this.attack = attacker;
+        this.defender = defender;
     }
-*/
 
 }
 

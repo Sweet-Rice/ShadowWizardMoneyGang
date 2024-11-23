@@ -50,6 +50,8 @@ public void toRainOrNotToRain(Summons user, Summons nonUser, Moves move) {
     }
 
 public void mainTurn() {
+    System.out.println("__________________________________________________________________________________________________________");
+
     System.out.print("\nTurn " + turns);
     //sets turn priority
     Moves moveA;
@@ -57,46 +59,55 @@ public void mainTurn() {
 
     setbMove();
     // dont need to change this. You need to modify methods in Summons and maybe moves.
-    if (((you.lead.getSpd()* you.lead.getBuff( Moves.Status.Spd) )* you.lead.isParalyzed())
-            > ((enemy.lead.getSpd() * you.lead.getBuff( Moves.Status.Spd)* enemy.lead.isParalyzed()))) {
-        a = you.lead;
-        b = enemy.lead;
+    if (((you.getLead().getSpd()* you.getLead().getBuff( Moves.Status.Spd) )* you.getLead().isParalyzed())
+            > ((enemy.getLead().getSpd() * you.getLead().getBuff( Moves.Status.Spd)* enemy.getLead().isParalyzed()))) {
+        a = you.getLead();
+        b = enemy.getLead();
         moveA = aMove;
         moveB = bMove;
     } else {
-        a = enemy.lead;
-        b = you.lead;
+        a = enemy.getLead();
+        b = you.getLead();
         moveB = aMove;
         moveA = bMove;
     }
     //overall structure of this is okay. need to change the things inside drastically
     if (moved) {
         if (!turnStart(a)) {
+            System.out.printf("\n%s used %s!\n", a.getName(), moveA.getName());
             moveA.doMove(a, b);
+
             weatherModifier(moveA, a, b);
             DamageCalc get = new DamageCalc(moveA, b);
             double Eff = get.getEffectiveness() * get.getEffectiveness2();
             //debug line
             getEff(moveA, b, a, get, Eff);
+            toRainOrNotToRain(a, b, moveA);
             if (faintChecker()) return;
         }
         if (!turnStart(b)){
+            System.out.printf("\n%s used %s!\n", b.getName(), moveB.getName());
             moveB.doMove(b, a);
+
             DamageCalc get = new DamageCalc(moveB, a);
             double Eff = get.getEffectiveness() * get.getEffectiveness2();
             //debug line
             getEff(moveB, b, a, get, Eff);
+            toRainOrNotToRain(a, b, moveA);
             if (faintChecker()) return;
+
         }
 
     } else {
-        if (turnStart(enemy.lead)) {
-            bMove.doMove(enemy.lead, you.lead);
-            DamageCalc get = new DamageCalc(bMove, you.lead);
+        if (turnStart(enemy.getLead())) {
+            System.out.printf("\n%s used %s!", enemy.getName(), bMove.getName());
+            bMove.doMove(enemy.getLead(), you.getLead());
+
+            DamageCalc get = new DamageCalc(bMove, you.getLead());
             double Eff = get.getEffectiveness() * get.getEffectiveness2();
-            getEff(bMove, enemy.lead, you.lead, get, Eff);
-            weatherModifier(bMove, enemy.lead, you.lead);
-            toRainOrNotToRain(enemy.lead, you.lead, bMove);
+            getEff(bMove, enemy.getLead(), you.getLead(), get, Eff);
+            weatherModifier(bMove, enemy.getLead(), you.getLead());
+            toRainOrNotToRain(enemy.getLead(), you.getLead(), bMove);
             if (faintChecker()) return;
         }
 
@@ -107,33 +118,36 @@ public void mainTurn() {
     damageStatusCheck(b);
     if (faintChecker()) return;
     turns++;
+
 }
 private boolean turnStart(Summons s){
     boolean huh = false;
     if (s.hasStatus(Moves.Status.Par)>0){
         System.out.printf("%s is Paralyzed!\n", s.getName());
-        s.timedPar++;
-        if (s.timedPar ==10){
+        s.statTimerTick(Moves.Status.Par);
+        if (s.getStatTimer(Moves.Status.Par) ==10){
             System.out.printf("%s stopped being paralyzed!", s.getName());
             s.removeStatus(Moves.Status.Par);
-            s.timedPar = 0;
+            s.statTimerZero(Moves.Status.Par);
         }
         int i = rand.nextInt(4);
         System.out.println(i);
         if ((i==3)){
             huh=true;
-            System.out.print("It can't move!\n");
+            System.out.printf("%s can't move!\n", s.getName());
         }
     }
     else if(s.hasStatus(Moves.Status.Slp)>0){
         System.out.printf("%s is fast Asleep\n!", s.getName());
-    s.timedSlp++;
-    if (s.timedSlp==3){
-        System.out.println("It woke up!");
+    s.statTimerTick(Moves.Status.Slp);
+    if (s.getStatTimer(Moves.Status.Slp)==3){
+        System.out.printf("%s woke up!\n", s.getName());
         s.removeStatus(Moves.Status.Slp);
-        s.timedSlp=0;
-    }else{huh= true;}
-
+        s.statTimerZero(Moves.Status.Slp);
+    }else {
+        huh = true;
+        System.out.printf("%s kept snoring!\n", s.getName());
+    }
     }
     return huh;
 }
@@ -169,9 +183,11 @@ private void turnEnd(){
 }
 private void damageStatusCheck(Summons s){
     if (s.hasStatus(Moves.Status.Burn)>0){
-        s.timedBurn++;
-        if (s.timedBurn==10){
+        s.statTimerTick(Moves.Status.Burn);
+        if (s.getStatTimer(Moves.Status.Burn)==10){
             System.out.printf("%s healed its burn!\n", s.getName());
+            s.removeStatus(Moves.Status.Burn);
+            s.statTimerZero(Moves.Status.Burn);
         }
         else {
             s.setHp(s.getHp()-(int)(s.getMaxHp()*(1.0/16.0)));
@@ -180,9 +196,11 @@ private void damageStatusCheck(Summons s){
 
     }
     if (s.hasStatus(Moves.Status.Pois)>0){
-        s.timedPois++;
-        if (s.timedPois==10){
+        s.statTimerTick(Moves.Status.Pois);
+        if (s.getStatTimer(Moves.Status.Pois)==10){
             System.out.printf("%s healed its pois!\n", s.getName());
+            s.removeStatus(Moves.Status.Pois);
+            s.statTimerZero(Moves.Status.Pois);
         }
         else {
             s.setHp(s.getHp()-(int)(s.getMaxHp()*(1.0/8.0)));
@@ -194,94 +212,95 @@ private void damageStatusCheck(Summons s){
 
 private void statModCheck(Summons s){
     if (s.getBuff(Moves.Status.Spd)>0){
-        s.timedSpd++;
-        if (s.timedSpd ==6){
-            for (int i = 0; i<s.statuses.size(); i++){
-                if (s.statuses.get(i).equals(Moves.Status.Spd)){
-                    s.statuses.remove(i);
+        s.statTimerTick(Moves.Status.Spd);
+        if (s.getStatTimer(Moves.Status.Spd) ==6){
+            for (int i = 0; i<s.getStatuses().size(); i++){
+                if (s.getStatuses().get(i).equals(Moves.Status.Spd)){
+                    s.getStatuses().remove(i);
                 }
             }
-            for (int i =0; i<s.statuses.size(); i++){
-                if (s.statuses.get(i).equals(Moves.Status.LessSpd)){
-                    s.statuses.remove(i);
+            for (int i =0; i<s.getStatuses().size(); i++){
+                if (s.getStatuses().get(i).equals(Moves.Status.LessSpd)){
+                    s.getStatuses().remove(i);
                 }
             }
-            s.timedSpd=0;
+            s.statTimerZero(Moves.Status.Spd);
         }
 
     }
     if (s.getBuff(Moves.Status.Atk)>0){
-       s.timedAtk++;
-       if (s.timedAtk ==6){
-           for (int i = 0; i<s.statuses.size(); i++){
-               if (s.statuses.get(i).equals(Moves.Status.Atk)){
-                   s.statuses.remove(i);
+       s.statTimerTick(Moves.Status.Atk);
+       if (s.getStatTimer(Moves.Status.Atk) ==6){
+           for (int i = 0; i<s.getStatuses().size(); i++){
+               if (s.getStatuses().get(i).equals(Moves.Status.Atk)){
+                   s.getStatuses().remove(i);
                }
            }
-           for(int i =0; i<s.statuses.size(); i++){
-               if (s.statuses.get(i).equals(Moves.Status.LessAtk)){
-                   s.statuses.remove(i);
+           for(int i =0; i<s.getStatuses().size(); i++){
+               if (s.getStatuses().get(i).equals(Moves.Status.LessAtk)){
+                   s.getStatuses().remove(i);
                }
            }
-           s.timedAtk=0;
+           s.statTimerZero(Moves.Status.Atk);
+
        }
     }
     if (s.getBuff(Moves.Status.SpAtk)>0){
-        s.timedSpAtk++;
-        if (s.timedSpAtk ==6){
-            for (int i = 0; i<s.statuses.size(); i++){
-                if (s.statuses.get(i).equals(Moves.Status.SpAtk)){
-                    s.statuses.remove(i);
+        s.statTimerTick(Moves.Status.SpAtk);
+        if (s.getStatTimer(Moves.Status.SpAtk) ==6){
+            for (int i = 0; i< s.getStatuses().size(); i++){
+                if (s.getStatuses().get(i).equals(Moves.Status.SpAtk)){
+                    s.getStatuses().remove(i);
                 }
             }
-            for(int i =0; i<s.statuses.size(); i++){
-                if (s.statuses.get(i).equals(Moves.Status.LessSpAtk)){
-                    s.statuses.remove(i);
+            for(int i =0; i<s.getStatuses().size(); i++){
+                if (s.getStatuses().get(i).equals(Moves.Status.LessSpAtk)){
+                    s.getStatuses().remove(i);
 
                 }
             }
-            s.timedSpAtk=0;
+            s.statTimerZero(Moves.Status.SpAtk);
         }
 
     }
     if (s.getBuff(Moves.Status.Def)>0){
-        s.timedDef++;
-        if (s.timedDef ==6){
-            for (int i = 0; i<s.statuses.size(); i++){
-                if (s.statuses.get(i).equals(Moves.Status.Def)){
-                    s.statuses.remove(i);
+        s.statTimerTick(Moves.Status.Def);
+        if (s.getStatTimer(Moves.Status.Def) ==6){
+            for (int i = 0; i<s.getStatuses().size(); i++){
+                if (s.getStatuses().get(i).equals(Moves.Status.Def)){
+                    s.getStatuses().remove(i);
 
                 }
             }
-            for (int i =0; i<s.statuses.size(); i++){
-                if (s.statuses.get(i).equals(Moves.Status.LessDef)){
-                    s.statuses.remove(i);
+            for (int i =0; i<s.getStatuses().size(); i++){
+                if (s.getStatuses().get(i).equals(Moves.Status.LessDef)){
+                    s.getStatuses().remove(i);
                 }
             }
-            s.timedDef=0;
+            s.statTimerZero(Moves.Status.Def);
         }
     }
     if (s.getBuff(Moves.Status.SpDef)>0){
-        s.timedSpDef++;
-        if (s.timedSpDef ==6){
-            for (int i = 0; i<s.statuses.size(); i++){
-                if (s.statuses.get(i).equals(Moves.Status.SpDef)){
-                    s.statuses.remove(i);
+        s.statTimerTick(Moves.Status.SpDef);
+        if (s.getStatTimer(Moves.Status.SpDef) ==6){
+            for (int i = 0; i<s.getStatuses().size(); i++){
+                if (s.getStatuses().get(i).equals(Moves.Status.SpDef)){
+                    s.getStatuses().remove(i);
 
                 }
             }
-            for (int i =0; i<s.statuses.size(); i++){
-                if (s.statuses.get(i).equals(Moves.Status.LessSpDef)){
-                    s.statuses.remove(i);
+            for (int i =0; i<s.getStatuses().size(); i++){
+                if (s.getStatuses().get(i).equals(Moves.Status.LessSpDef)){
+                    s.getStatuses().remove(i);
                 }
             }
-            s.timedSpDef=0;
+            s.statTimerZero(Moves.Status.SpDef);
         }
     }
 
 }
 private void getEff(Moves moveB, Summons a, Summons b, DamageCalc get, double eff) {
-        System.out.printf("type1: %f type2: %f Eff: %f\n", get.getEffectiveness(), get.getEffectiveness2(), eff);
+        //System.out.printf("type1: %f type2: %f Eff: %f\n", get.getEffectiveness(), get.getEffectiveness2(), eff);
 
         if (eff <1){
             System.out.println("it was not very effective...");
@@ -289,7 +308,7 @@ private void getEff(Moves moveB, Summons a, Summons b, DamageCalc get, double ef
             System.out.println("It was super effective!");
         }
         get = null;
-        toRainOrNotToRain(b, a, moveB);
+
 
     }
 public int getTurns() {
@@ -317,12 +336,12 @@ public void setaMove(Moves a){
 }
 public  void setbMove(){
     //Enemy AI
-    bMove = enemy.lead.moves.get(rand.nextInt(enemy.lead.moves.size()));
+    bMove = enemy.getLead().getMoves().get(rand.nextInt(enemy.getLead().getMoves().size()));
     System.out.printf("");
 }
 public  boolean allFainted(Wizards player) {
-        for (int i = 0; i < player.summons.size(); i++) {
-            if (player.summons.get(i).getHp() > 0) {
+        for (int i = 0; i < player.getSummons().size(); i++) {
+            if (player.getSummons().get(i).getHp() > 0) {
                 return false;  // If there's any Pokémon still standing, return false
             }
         }
@@ -331,13 +350,32 @@ public  boolean allFainted(Wizards player) {
 private boolean faintChecker() {
         if (faintHandler()==1){
             //you fainted
-            System.out.printf("\n%s fainted!\n\n", you.lead.getName());
+            System.out.printf("\n%s fainted!\n\n", you.getLead().getName());
             turns++;
+            System.out.println("__________________________________________________________________________________________________________");
             return true;
         }else if (faintHandler()==2){
             //enemy fainted
-            System.out.printf("\n%s fainted!\n\n", enemy.lead.getName());
+            if (!allFainted(enemy)){
+                if (enemy.getLead().isFainted()){
+                    boolean bool = false;
+                    int x = 0;
+                    while (!bool){
+
+                        if (enemy.getSummons().get(x).isFainted()){
+                            //System.out.println("Failed to switch to summon on index " + x);
+                            x = rand.nextInt(4);
+                        } else {
+                            enemy.setLead(enemy.getSummons().get(x));
+                            bool = true;
+                        }
+                    }
+                }
+            }
+
+            System.out.printf("\n%s fainted!\n\n", enemy.getLead().getName());
             turns++;
+            System.out.println("__________________________________________________________________________________________________________");
             return true;
         }
         return false;
@@ -407,13 +445,13 @@ public  void weatherModifier(Moves moveA, Summons a, Summons b){
     }
 private int faintHandler(){
     int faintStatus = 0;
-    if (you.lead.getHp() <=0){
-        you.lead.setHp(0);
-        you.lead.setFainted(true);
+    if (you.getLead().getHp() <=0){
+        you.getLead().setHp(0);
+        you.getLead().setFainted(true);
         faintStatus = 1;
-}else if (enemy.lead.getHp() <= 0){
-        enemy.lead.setHp(0);
-        enemy.lead.setFainted(true);
+}else if (enemy.getLead().getHp() <= 0){
+        enemy.getLead().setHp(0);
+        enemy.getLead().setFainted(true);
         faintStatus = 2;
     }
 return faintStatus;

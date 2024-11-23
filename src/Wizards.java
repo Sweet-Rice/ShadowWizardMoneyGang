@@ -1,8 +1,13 @@
 import java.util.ArrayList;
 public class Wizards {
     private String name;
-    public ArrayList<Summons> summons;
-    public Summons lead;
+    private ArrayList<Summons> summons;
+    private Summons getLead;
+
+
+    public Summons getLead() {
+        return getLead;
+    }
 
     public Wizards(String name){
         this.name = name;
@@ -21,9 +26,11 @@ public class Wizards {
 
     public void addSummons(Summons s){
         this.summons.add(s);
-        this.lead = summons.get(0);
+        this.getLead = summons.get(0);
     }
-
+    public void removeSummons(Summons s){
+        this.summons.remove(s);
+    }
     @Override
     public String toString() {
         String output = "Wizard ";
@@ -36,10 +43,10 @@ public class Wizards {
 
         for (int i = 0; i < this.summons.size(); i++) {
             output += (i+1) + ". " + this.summons.get(i) + "\n";
-            for(int j = 0; j < this.summons.get(i).moves.size(); j++){
-            output += "\t" + (j+1) + ". " + this.summons.get(i).moves.get(j).toString() + "\t\t\t\t\t\t";
+            for(int j = 0; j < this.summons.get(i).getMoves().size(); j++){
+            output += "\t" + (j+1) + ". " + this.summons.get(i).getMoves().get(j).toString() + "\t\t\t\t\t\t";
             if(j%2==1){
-                output += "\n\t"+ this.summons.get(i).moves.get(j-1).getDescription() + "\t\t\t\t\t\t" + this.summons.get(i).moves.get(j).getDescription()+"\n";
+                output += "\n\t"+ this.summons.get(i).getMoves().get(j-1).getDescription() + "\t\t\t\t\t\t" + this.summons.get(i).getMoves().get(j).getDescription()+"\n";
             }
             }
         }
@@ -48,7 +55,7 @@ public class Wizards {
 
 
     public void setLead(Summons lead) {
-        this.lead = lead;
+        this.getLead = lead;
     }
 }
 

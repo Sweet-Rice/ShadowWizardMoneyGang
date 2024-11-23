@@ -11,8 +11,15 @@ public class Summons {
     //Name and type
     private final String name;
 
-    public DamageCalc.Type type1;
-    public DamageCalc.Type type2;
+    private final DamageCalc.Type type1;
+    private final DamageCalc.Type type2;
+
+    public DamageCalc.Type getType1() {
+        return type1;
+    }
+    public DamageCalc.Type getType2() {
+        return type2;
+    }
 
     //Stats for each summon
     private boolean fainted = false;
@@ -22,25 +29,127 @@ public class Summons {
     private final int spdef;
     private int hp;
     private final int spd;
-    public ArrayList<Moves> moves;
+    private ArrayList<Moves> moves;
+
+
     //damage multiplier based on type
     private final int maxhp;
     private Moves.Status status = Moves.Status.Null;
-    public ArrayList<Moves.Status> statuses;
+    private ArrayList<Moves.Status> statuses;
    //status effect timers
-    public int timedAtk = 0;
-    public int timedDef = 0;
-    public int timedSpAtk = 0;
-    public int timedSpDef = 0;
-    public int timedSpd = 0;
+    private int timedAtk = 0;
+    private int timedDef = 0;
+    private int timedSpAtk = 0;
+    private int timedSpDef = 0;
+    private int timedSpd = 0;
 
-    public int timedPois = 0;
-    public int timedPar = 0;
-    public int timedBurn = 0;
-    public int timedSlp = 0;
+    private int timedPois = 0;
+    private int timedPar = 0;
+    private int timedBurn = 0;
+    private int timedSlp = 0;
 
+    public int getStatTimer(Moves.Status status) {
+        int stat = -1;
+        switch (status) {
+            case Atk -> {
+                stat = timedAtk;
+            }
+            case Def -> {
+                stat = timedDef;
 
+            }
+            case SpAtk -> {
+                stat = timedSpAtk;
+            }
+            case SpDef -> {
+                stat = timedSpDef;
+            }
+            case Spd -> {
+                stat = timedSpd;
+            }
+            case Pois -> {
+                stat = timedPois;
+            }
+            case Par -> {
+                stat = timedPar;
+            }
+            case Burn -> {
+                stat = timedBurn;
+            }
+            case Slp -> {
+                stat = timedSlp;
+            }
+        }
+        if (stat == -1) {
+            System.out.println("what the hell");
+        }
+        return stat;
+    }
+    public void statTimerTick(Moves.Status status){
+        switch (status) {
+            case Atk -> {
+                timedAtk++;
+            }
+            case Def -> {
+               timedDef++;
 
+            }
+            case SpAtk -> {
+                timedSpAtk++;
+            }
+            case SpDef -> {
+                timedSpDef++;
+            }
+            case Spd -> {
+                timedSpd++;
+            }
+            case Pois -> {
+             timedPois++;
+            }
+            case Par -> {
+                timedPar++;
+            }
+            case Burn -> {
+                timedBurn++;
+            }
+            case Slp -> {
+              timedSlp++;
+            }
+        }
+
+    }
+    public void statTimerZero(Moves.Status status){
+        switch (status) {
+            case Atk -> {
+                timedAtk = 0;
+            }
+            case Def -> {
+                timedDef = 0;
+
+            }
+            case SpAtk -> {
+                timedSpAtk = 0;
+            }
+            case SpDef -> {
+                timedSpDef = 0;
+            }
+            case Spd -> {
+                timedSpd = 0;
+            }
+            case Pois -> {
+               timedPois = 0;
+            }
+            case Par -> {
+                timedPar = 0;
+            }
+            case Burn -> {
+                timedBurn = 0;
+            }
+            case Slp -> {
+                timedSlp = 0;
+            }
+        }
+    }
 
 
     public Summons(String name, DamageCalc.Type type1, DamageCalc.Type type2,
@@ -72,7 +181,12 @@ public class Summons {
        this.statuses = new ArrayList<>();
     }
 
-
+    public ArrayList<Moves> getMoves() {
+    return moves;
+    }
+    public ArrayList<Moves.Status> getStatuses() {
+        return statuses;
+    }
 
     //ORGANIZATION!!!!!!
     //getter functions
@@ -176,7 +290,13 @@ public class Summons {
     public void setFainted(boolean fainted){
         this.fainted = fainted;
     }
-
+    public void reset(){
+        this.hp = maxhp;
+        this.fainted = false;
+        for (int i = 0; i < getMoves().size(); i++){
+            getMoves().get(i).reset();
+        }
+    }
     // genuine utility
     public String MovesToString() {
         String output = "";
@@ -204,93 +324,93 @@ public class Summons {
                 if (!(hasStatus(Moves.Status.Atk)>5)){
                     statuses.add(Moves.Status.Atk);
                     this.timedAtk = 0;
-                    System.out.println("Attack rose!");
+                    System.out.printf("%s's Attack rose!\n", name);
                 }else {
-                    System.out.println("Attack can't go any higher!");
+                    System.out.printf("%s's Attack can't go any higher!\n", name);
                 }
             }
             case Def -> {
                 if (!(hasStatus(Moves.Status.Def)>5)){
                     statuses.add(Moves.Status.Def);
                     this.timedDef = 0;
-                    System.out.println("Defense rose!");
+                    System.out.printf("%s's Defense rose!\n", name);
                 } else {
-                    System.out.println("Defense can't go any higher!");
+                    System.out.printf("%s's Defense can't go any higher!", name);
                 }
             }
             case Spd -> {
                 if (!(hasStatus(Moves.Status.Spd)>5)){
                     statuses.add(Moves.Status.Spd);
                     this.timedSpd = 0;
-                    System.out.println("Speed rose!");
+                    System.out.printf("%s's Speed rose!\n", name);
                 } else {
-                    System.out.println("Speed can't go any higher!");
+                    System.out.printf("%s's Speed can't go any higher!\n", name);
                 }
             }
             case SpAtk -> {
                 if (!(hasStatus(Moves.Status.SpAtk)>5)){
                     statuses.add(Moves.Status.SpAtk);
                     this.timedSpAtk = 0;
-                    System.out.println("Special Attack rose!");
+                    System.out.printf("%s's Special Attack rose! \n", name);
                 } else {
-                    System.out.println("Special Attack can't go any higher!");
+                    System.out.printf("%s's Special Attack can't go any higher!\n", name);
                 }
             }
             case SpDef -> {
                 if (!(hasStatus(Moves.Status.SpDef)>5)){
                     statuses.add(Moves.Status.SpDef);
                     this.timedSpDef = 0;
-                    System.out.println("Special Defense rose!");
+                    System.out.printf("%s's Special Defense rose!\n", name);
 
                 } else {
-                    System.out.println("Special Defense can't go any higher!");
+                    System.out.printf("%s's Special Defense can't go any higher!\n", name);
                 }
             }
             case LessAtk -> {
                 if (!(hasStatus(Moves.Status.LessAtk)>5)){
                     statuses.add(Moves.Status.LessAtk);
                     this.timedAtk =0;
-                    System.out.println("Attack fell!");
+                    System.out.printf("%s's Attack fell!\n", name);
                 } else {
-                    System.out.println("Attack can't go any lower!");
+                    System.out.printf("%s's Attack can't go any lower!\n", name);
                 }
             }
             case LessDef -> {
                 if (!(hasStatus(Moves.Status.LessDef)>5)){
                     statuses.add(Moves.Status.LessDef);
                     this.timedDef = 0;
-                    System.out.println("Defense fell!");
+                    System.out.printf("%s's Defense fell!\n", name);
                 }else {
-                    System.out.println("Defense can't go any lower!");
+                    System.out.printf("%s's Defense can't go any lower!\n", name);
                 }
             }
             case LessSpAtk -> {
                 if (!(hasStatus(Moves.Status.LessSpAtk)>5)){
                     statuses.add(Moves.Status.LessSpAtk);
                     this.timedSpAtk = 0;
-                    System.out.println("SpAtk fell!");
+                    System.out.printf("%s's SpAtk fell!\n", name);
                 } else {
-                    System.out.println("SpAtk can't go any lower!");
+                    System.out.printf("%s's SpAtk can't go any lower!\n", name);
                 }
             }
             case LessSpDef -> {
                 if (!(hasStatus(Moves.Status.LessSpDef)>5)){
                     statuses.add(Moves.Status.LessSpDef);
                     this.timedSpDef = 0;
-                    System.out.println("Special Defense fell!");
+                    System.out.printf("%s's Special Defense fell!\n", name );
                 }
                 else {
-                    System.out.println("Special Defense can't go any lower!");
+                    System.out.printf("%s's Special Defense can't go any lower!\n", name);
                 }
             }
             case LessSpd -> {
                 if (!(hasStatus(Moves.Status.LessSpd)>5)){
                     statuses.add(Moves.Status.LessSpd);
                     this.timedSpd = 0;
-                    System.out.println("Special Defense fell!");
+                    System.out.printf("%s's Special Defense fell!\n", name);
                 }
                 else {
-                    System.out.println("Special Defense can't go any lower!");
+                    System.out.printf("%s's Special Defense can't go any lower!\n", name);
                 }
             }
             case Par -> {
@@ -298,12 +418,12 @@ public class Summons {
                 (hasStatus(Moves.Status.Slp)>0)||
                 (hasStatus(Moves.Status.Pois)>0)||
                 (hasStatus(Moves.Status.Burn)>0)){
-                    System.out.println("Summon is already paralyzed!");
+                    System.out.printf("%s is already %s!\n", name, getStatusName());
                 }
                 else {
 
                     statuses.add(Moves.Status.Par);
-                    System.out.println("Summon is now paralyzed!");
+                    System.out.printf("%s is now paralyzed!\n", name);
                 }
             }
             case Slp -> {
@@ -312,7 +432,7 @@ public class Summons {
                         (hasStatus(Moves.Status.Pois)>0)||
                         (hasStatus(Moves.Status.Burn)>0)){
 
-                    System.out.printf("Summon is already %s!", getStatusName());
+                    System.out.printf("Summon is already %s\n!", getStatusName());
                 }else {
                     statuses.add(Moves.Status.Slp);
                     System.out.println("Summon fell asleep!");

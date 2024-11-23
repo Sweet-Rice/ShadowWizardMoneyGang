@@ -14,8 +14,12 @@ public class Moves {
     private final String description;
     private final int maxpp;
     private int pp;
-    private Who self;
+    private final Who self;
     //private TurnHandler turnHandler;
+
+    public String ppToString(){
+        return ""+ this.pp + "/" + this.maxpp + " PP";
+    }
 
     public Moves( String name, DamageCalc.Type type, Dmg dmg, int bp, int maxpp, Status status, Who self, String description) {
         this.name = name;
@@ -29,6 +33,10 @@ public class Moves {
         this.self = self;
         //this.turnHandler = turnHandler;
 
+    }
+
+    public int getPp() {
+        return pp;
     }
 
     public Who getSelf() {
@@ -54,7 +62,9 @@ public class Moves {
     public String getName() {
         return name;
     }
-
+    public void reset(){
+        pp = maxpp;
+    }
     //idea for implementing
     public void doMove(Summons user, Summons nonUser) {
         System.out.print("\n\n");
@@ -98,7 +108,9 @@ public class Moves {
 
         }
     }
-
+    if (pp!=0){
+        this.pp--;
+    }
     }
 
     public int damageCalc(Summons user, Summons nonUser) {
@@ -115,7 +127,7 @@ public class Moves {
             burnMult = 0.5;
         }
         double stab = 1.0;
-        if ((user.type1 == this.type)||(user.type2 == this.type)){
+        if ((user.getType1() == this.type)||(user.getType2() == this.type)){
             stab = 1.5;
         }
 
@@ -144,6 +156,6 @@ public class Moves {
 
     @Override
     public String toString() {
-        return  name + "\t" + type + "\t" + dmg + "\t" + basepower + "\t" + pp +"/" + maxpp;
+        return  name + "\t" + type + "\t" + dmg + "\t" + basepower + "\t" + ppToString();
     }
 }

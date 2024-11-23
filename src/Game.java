@@ -3,7 +3,6 @@ import java.util.Scanner;
 public class Game {
     private GameState currentState;
     private Scanner scanner = new Scanner(System.in);
-    //handles gamestates and their transitions
 
 
     public GameState getCurrentState() {
@@ -11,9 +10,6 @@ public class Game {
     }
 
     public void setState(GameState state) {
-        if (currentState != null) {
-            currentState.exitState();
-        }
         currentState = state;
         currentState.enterState();
     }
